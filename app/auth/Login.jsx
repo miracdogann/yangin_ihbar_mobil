@@ -11,7 +11,7 @@ import {
 import { TextInput, Button } from 'react-native-paper';
 import React, { useState } from 'react';
 
-import logo from '@/assets/images/logo.png';
+import logo from '@/assets/images/logo-2.png';
 
 const LoginScreen = () => {
   const [secure, setSecure] = useState(true);
@@ -114,15 +114,14 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   logo: {
-    marginTop: 50,
-    width: '80%',
-    height: 200,
+    marginTop: 20,
+    width: 300,
+    height: 300,
     resizeMode: 'contain',
   },
   infoText: {
     color: 'grey',
     fontSize: 12,
-    marginTop: 30,
   },
   textInput: {
     backgroundColor: 'white',
