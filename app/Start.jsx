@@ -1,88 +1,118 @@
-// app/start.tsx
+import React from "react";
 import {
   View,
   Text,
-  Button,
   Image,
   StyleSheet,
   TouchableOpacity,
+  Dimensions,
+  SafeAreaView,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const { width, height } = Dimensions.get("window");
 
 export default function Start() {
   const router = useRouter();
 
+  const checkLoginStatus = async () => {
+    const token = await AsyncStorage.getItem("userToken");
+    if (token) {
+      console.log("token var", token);
+      router.push("/(tabs)/Map");
+    } else {
+      console.log("token yok");
+      router.navigate("/auth/Login");
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      {/* Logo */}
-      <Image
-        source={require("../assets/images/fullLogo.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Logo üstte */}
+        <Image
+          source={require("../assets/images/fullLogo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
 
-      {/* Alt başlık */}
-      <Text style={styles.subtitle}>Yangını erken bildir, felaketi önle!</Text>
+        {/* Orta metin */}
+        <View style={styles.middleContainer}>
+          <Text style={styles.subtitle}>
+            Yangını erken bildir, felaketi önle!
+          </Text>
+        </View>
 
-      {/* Başla Butonu */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push("/(tabs)/Map")}
-      >
-        <Text style={styles.buttonText}>Başla</Text>
-      </TouchableOpacity>
-      <Button
-        title=" giriş yap"
-        onPress={() => router.navigate("/auth/Login")}
-      />
-      <Button
-        title="Kayıt ol"
-        onPress={() => router.navigate("/auth/Register")}
-      />
+        {/* Buton altta */}
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.8}
+          onPress={checkLoginStatus}
+        >
+          <Text style={styles.buttonText}>Başla</Text>
+        </TouchableOpacity>
 
-      {/* Footer metni */}
-      <Text style={styles.footer}>Tüm Hakları Saklıdır</Text>
-    </View>
+        {/* Footer */}
+        <Text style={styles.footer}>© 2025 Tüm Hakları Saklıdır</Text>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: Platform.OS === "android" ? 25 : 0,
+  },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    // Logo en üstte, text ortada, buton en altta için flex düzeni:
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   logo: {
-    width: 350,
-    height: 350,
-    marginBottom: 30,
+    width: width * 0.7,
+    height: width * 0.7,
+    marginTop: 10,
+  },
+  middleContainer: {
+    flex: 1,
+    justifyContent: "center",
   },
   subtitle: {
-    fontSize: 16,
-    fontFamily: "monospace", // isteğe göre değiştirilebilir
-    color: "#333",
-    marginBottom: 40,
+    fontSize: 18,
+    color: "#444",
+    textAlign: "center",
+    fontWeight: "500",
   },
   button: {
-    width: 250,
+    width: width * 0.7,
     backgroundColor: "#0033FF",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 10,
-    marginBottom: 60,
-    alignItems: "center",
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginBottom: 200,
+    shadowColor: "#0033FF",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontWeight: "700",
+    textAlign: "center",
   },
   footer: {
     position: "absolute",
     bottom: 20,
-    fontSize: 12,
+    fontSize: 13,
     color: "#999",
+    textAlign: "center",
+    width: "100%",
   },
 });

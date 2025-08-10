@@ -9,14 +9,19 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Konumunuzu uygulama açıkken kullanmamıza izin verin.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Konumunuzu uygulama açıkken ve arka planda kullanmamıza izin verin."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "bundler": "metro",
@@ -32,6 +37,21 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Konumunuzu, uygulama açıkken ve arka planda kullanmamıza izin verin.",
+          "locationWhenInUsePermission": "Konumunuzu, uygulama açıkken kullanmamıza izin verin."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Uygulamamızın kameranıza erişmesine izin verin!",
+          "microphonePermission": "Uygulamamızın mikrofonunuza erişmesine izin verin!",
+          "recordAudioAndroid": true
         }
       ]
     ],

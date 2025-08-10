@@ -1,3 +1,4 @@
+import React from "react";
 import {
   View,
   Text,
@@ -5,123 +6,112 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  Platform,
 } from "react-native";
-import { Card, IconButton } from "react-native-paper";
-import React from "react";
+import { Card, IconButton, useTheme } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import logo from "@/assets/images/fullLogo.png";
 
-const screenWidth = Dimensions.get("window").width;
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+
+// Yangın önleme ipuçları verileri
+const FIRE_SAFETY_TIPS = [
+  {
+    id: 1,
+    icon: "fire-extinguisher",
+    text: "Yaz aylarında ormanlık bölgelerde ateş yakmak yangına sebep olabilir. Lütfen pikniklerde ateş yakmamaya dikkat edin.",
+  },
+  {
+    id: 2,
+    icon: "smoking-off",
+    text: "Atılan sigara izmaritleri, kuru yapraklarla temas ettiğinde büyük yangınlara yol açabilir.",
+  },
+  {
+    id: 3,
+    icon: "power-plug-off",
+    text: "Ev yangınlarının %25'i elektrik kontağından çıkmaktadır. Uzun süreli kullanmadığınız cihazların fişlerini çekin.",
+  },
+  {
+    id: 4,
+    icon: "candle",
+    text: "Yanar halde bırakılan mumlar ev yangınlarının önemli sebeplerindendir. Mumları asla gözetimsiz bırakmayın.",
+  },
+  {
+    id: 5,
+    icon: "stove",
+    text: "Yemek pişirirken ocak başından ayrılmayın. Yağ yangınlarında asla su kullanmayın, üzerini kapatarak oksijeni kesin.",
+  },
+  {
+    id: 6,
+    icon: "alarm-light",
+    text: "Evlerinize duman dedektörü taktırın. Düzenli olarak pil kontrolü yapın ve 10 yılda bir değiştirin.",
+  },
+];
 
 const Info = () => {
+  const theme = useTheme();
+  const isIOS = Platform.OS === "ios";
+
   return (
-    <View style={styles.formContainer}>
+    <View
+      style={[
+        styles.formContainer,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
+        bounces={isIOS} // iOS için bounce efekti
+        overScrollMode={isIOS ? "always" : "never"} // Android için overscroll ayarı
       >
-        <Image source={logo} style={styles.logo} />
+        <Image
+          source={logo}
+          style={styles.logo}
+          accessibilityLabel="Uygulama logosu"
+        />
 
-        <Text style={styles.title}>Yangını önle !</Text>
+        <Text style={[styles.title, { color: theme.colors.primary }]}>
+          Yangını Önle!
+        </Text>
 
-        <Card style={styles.card}>
-          <Card.Content>
-            <View style={styles.cardContentContainer}>
-              <IconButton
-                icon="fire-extinguisher"
-                size={35}
-                iconColor="red"
-                style={styles.contentIcon}
-              />
-              <Text style={styles.cardContentText}>
-                Yaz aylarında ormanlık bölgelerde ateş yakmak yangına sebep
-                olabilir. Lütfen pikniklerde ateş yakmamaya dikkat edin.
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
+        <Text style={[styles.subtitle, { color: theme.colors.secondary }]}>
+          Küçük önlemlerle büyük felaketleri engelleyebilirsiniz
+        </Text>
 
-        <Card style={styles.card}>
-          <Card.Content>
-            <View style={styles.cardContentContainer}>
-              <IconButton
-                icon="fire-extinguisher"
-                size={35}
-                iconColor="red"
-                style={styles.contentIcon}
-              />
-              <Text style={styles.cardContentText}>
-                Atılan sigara izmaritleri, kuru yapraklarla temas ettiğinde
-                büyük yangınlara yol açabilir.
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-
-        <Card style={styles.card}>
-          <Card.Content>
-            <View style={styles.cardContentContainer}>
-              <IconButton
-                icon="fire-extinguisher"
-                size={35}
-                iconColor="red"
-                style={styles.contentIcon}
-              />
-              <Text style={styles.cardContentText}>
-                Ev yangınlarının %25'i elektrik kontağından çıkmaktadır. Uzun
-                süreli kullanmadığınız cihazların fişlerini çekin.
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-        <Card style={styles.card}>
-          <Card.Content>
-            <View style={styles.cardContentContainer}>
-              <IconButton
-                icon="fire-extinguisher"
-                size={35}
-                iconColor="red"
-                style={styles.contentIcon}
-              />
-              <Text style={styles.cardContentText}>
-                Ev yangınlarının %25'i elektrik kontağından çıkmaktadır. Uzun
-                süreli kullanmadığınız cihazların fişlerini çekin.
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-        <Card style={styles.card}>
-          <Card.Content>
-            <View style={styles.cardContentContainer}>
-              <IconButton
-                icon="fire-extinguisher"
-                size={35}
-                iconColor="red"
-                style={styles.contentIcon}
-              />
-              <Text style={styles.cardContentText}>
-                Ev yangınlarının %25'i elektrik kontağından çıkmaktadır. Uzun
-                süreli kullanmadığınız cihazların fişlerini çekin.
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-        <Card style={styles.card}>
-          <Card.Content>
-            <View style={styles.cardContentContainer}>
-              <IconButton
-                icon="fire-extinguisher"
-                size={35}
-                iconColor="red"
-                style={styles.contentIcon}
-              />
-              <Text style={styles.cardContentText}>
-                Ev yangınlarının %25'i elektrik kontağından çıkmaktadır. Uzun
-                süreli kullanmadığınız cihazların fişlerini çekin.
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
+        {FIRE_SAFETY_TIPS.map((tip) => (
+          <Card
+            key={tip.id}
+            style={[
+              styles.card,
+              {
+                backgroundColor: theme.colors.surface,
+                shadowColor: theme.colors.primary,
+              },
+            ]}
+            elevation={3}
+          >
+            <Card.Content>
+              <View style={styles.cardContentContainer}>
+                <MaterialCommunityIcons
+                  name={tip.icon}
+                  size={32}
+                  color={theme.colors.error}
+                  style={styles.icon}
+                />
+                <Text
+                  style={[
+                    styles.cardContentText,
+                    { color: theme.colors.onSurface },
+                  ]}
+                >
+                  {tip.text}
+                </Text>
+              </View>
+            </Card.Content>
+          </Card>
+        ))}
       </ScrollView>
     </View>
   );
@@ -132,57 +122,84 @@ export default Info;
 const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
-    backgroundColor: "white",
     alignItems: "center",
   },
-
   scrollContainer: {
     flexGrow: 1,
-    padding: 10,
-    paddingBottom: 100,
+    padding: 16,
+    paddingBottom: 32,
     width: "100%",
+    alignItems: "center",
   },
-
   cardContentContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
+    padding: 8,
   },
-
   card: {
-    width: screenWidth * 0.9,
-    margin: 16,
-    backgroundColor: "white",
-    borderRadius: 15,
+    width: screenWidth * 0.92,
+    marginVertical: 12,
+    borderRadius: 12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    // Android için shadow
+    elevation: 3,
+    // iOS için shadow
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
-
   logo: {
-    marginTop: 30,
-    width: 200,
-    height: 200,
+    marginTop: screenHeight * 0.02,
+    width: 180,
+    height: 180,
     resizeMode: "contain",
-    opacity: 0.5,
-    alignSelf: "center",
+    opacity: 1,
   },
-
-  contentIcon: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-    paddingLeft: 0,
+  icon: {
+    marginRight: 12,
+    width: 40,
+    height: 40,
   },
-
   title: {
-    fontSize: 30,
-    fontWeight: "500",
-    alignSelf: "center",
-  },
-
-  cardContentText: {
-    textAlign: "center",
+    fontSize: 28,
     fontWeight: "600",
-    flexShrink: 1,
-    flexWrap: "wrap",
+    marginBottom: 8,
+    textAlign: "center",
+    fontFamily: Platform.select({
+      ios: "Helvetica Neue",
+      android: "sans-serif-medium",
+    }),
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: "400",
+    marginBottom: 24,
+    textAlign: "center",
+    fontFamily: Platform.select({
+      ios: "Helvetica Neue",
+      android: "sans-serif",
+    }),
+  },
+  cardContentText: {
+    textAlign: "left",
+    fontWeight: "500",
     flex: 1,
+    fontSize: 15,
+    lineHeight: 22,
+    fontFamily: Platform.select({
+      ios: "Helvetica Neue",
+      android: "sans-serif",
+    }),
   },
 });

@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import React, { useState } from "react";
@@ -15,13 +16,73 @@ import { MaskedTextInput } from "react-native-mask-text";
 
 import logo from "@/assets/images/fullLogo.png";
 import { useRouter } from "expo-router";
+import { API_BASE_URL } from "@/services/api";
 
 const Register = () => {
+  const [nameSurname, setNameSurname] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [securePassword, setSecurePassword] = useState(true);
   const [secureRepeat, setSecureRepeat] = useState(true);
   const router = useRouter();
+
   const goLoginPage = () => {
     router.push("/auth/Login");
+  };
+
+  const handleRegister = async () => {
+    // Basit validation (backend zaten detaylı kontrol yapacak)
+    if (
+      !nameSurname ||
+      !email ||
+      !phoneNumber ||
+      !password ||
+      !confirmPassword
+    ) {
+      Alert.alert("Hata", "Lütfen tüm alanları doldurun.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Hata", "Şifreler eşleşmiyor.");
+      return;
+    }
+
+    // Backend API adresin (kendi adresine göre değiştir)
+
+    // Telefon numarasından parantez ve boşlukları kaldır (backend formatına uygun olsun)
+    const normalizedPhone = phoneNumber.replace(/[()\s-]/g, "");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}register/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name_surname: nameSurname,
+          email: email,
+          phone_number: normalizedPhone,
+          password: password,
+          confirm_password: confirmPassword,
+        }),
+      });
+
+      const json = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Başarılı", json.message);
+        router.push("/auth/Login"); // Kayıt sonrası login sayfasına yönlendir
+      } else {
+        // Backend'ten dönen hata mesajı
+        Alert.alert("Hata", json.error || "Kayıt sırasında hata oluştu.");
+      }
+    } catch (error) {
+      Alert.alert("Hata", "Sunucuya bağlanılamadı.");
+      console.error(error);
+    }
   };
 
   return (
@@ -49,6 +110,8 @@ const Register = () => {
                 placeholder="Adınızı ve soyadınızı girin"
                 outlineColor="grey"
                 activeOutlineColor="blue"
+                value={nameSurname}
+                onChangeText={setNameSurname}
               />
             </View>
 
@@ -62,6 +125,9 @@ const Register = () => {
                 outlineColor="grey"
                 activeOutlineColor="blue"
                 keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
               />
             </View>
 
@@ -69,7 +135,11 @@ const Register = () => {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Telefon Numarası</Text>
               <View
-                style={{ borderWidth: 1, borderColor: "grey", borderRadius: 4 }}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "grey",
+                  borderRadius: 4,
+                }}
               >
                 <MaskedTextInput
                   type="custom"
@@ -83,7 +153,8 @@ const Register = () => {
                     fontSize: 16,
                     color: "black",
                   }}
-                  onChangeText={(text) => console.log("Telefon:", text)}
+                  value={phoneNumber}
+                  onChangeText={setPhoneNumber}
                 />
               </View>
             </View>
@@ -104,6 +175,8 @@ const Register = () => {
                     onPress={() => setSecurePassword(!securePassword)}
                   />
                 }
+                value={password}
+                onChangeText={setPassword}
               />
             </View>
 
@@ -123,6 +196,8 @@ const Register = () => {
                     onPress={() => setSecureRepeat(!secureRepeat)}
                   />
                 }
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
               />
             </View>
 
@@ -133,7 +208,7 @@ const Register = () => {
               rippleColor="white"
               style={styles.loginButton}
               labelStyle={styles.loginButtonText}
-              onPress={() => console.log("Kayıt tamamlandı")}
+              onPress={handleRegister}
             >
               Kayıt Ol
             </Button>
@@ -152,6 +227,7 @@ const Register = () => {
 };
 
 export default Register;
+
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,

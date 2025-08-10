@@ -1,8 +1,38 @@
+import { router } from "expo-router";
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { Avatar, Button, Card, Text, Divider } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Card,
+  Text,
+  Divider,
+  ActivityIndicator,
+} from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUser } from "@/contexts/userContext";
+import Toast from "react-native-toast-message";
 
 const Account = () => {
+  const { user, loading } = useUser();
+  console.log("account page user ,", user);
+  const handleLogout = async () => {
+    Toast.show({
+      type: "info",
+      text1: "Çıkış Yapılıyor ...",
+      position: "top",
+    });
+    await AsyncStorage.removeItem("userToken");
+    // veya await AsyncStorage.setItem('isLoggedIn', 'false');
+    router.replace("/Start"); // veya login ekranı
+  };
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#6200ee" />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       {/* Logo */}
@@ -18,21 +48,21 @@ const Account = () => {
           <Card.Content style={styles.cardContent}>
             <View style={styles.infoItem}>
               <Avatar.Icon icon="account" size={24} style={styles.icon} />
-              <Text style={styles.infoText}>Tolga YILMAZ</Text>
+              <Text style={styles.infoText}>{user.name_surname}</Text>
             </View>
 
             <Divider style={styles.divider} />
 
             <View style={styles.infoItem}>
               <Avatar.Icon icon="phone" size={24} style={styles.icon} />
-              <Text style={styles.infoText}>0(505) 505 55 55</Text>
+              <Text style={styles.infoText}>{user.phone_number}</Text>
             </View>
 
             <Divider style={styles.divider} />
 
             <View style={styles.infoItem}>
               <Avatar.Icon icon="email" size={24} style={styles.icon} />
-              <Text style={styles.infoText}>yilmaztolga@gmail.com</Text>
+              <Text style={styles.infoText}>{user.email}</Text>
             </View>
           </Card.Content>
         </Card>
@@ -61,7 +91,7 @@ const Account = () => {
         buttonColor="blue"
         style={styles.button}
         labelStyle={styles.buttonText}
-        onPress={() => console.log("Çıkış Yap")}
+        onPress={() => handleLogout()}
       >
         Çıkış Yap
       </Button>
