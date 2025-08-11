@@ -1,22 +1,20 @@
+import logo from "@/assets/images/fullLogo.png";
+import { API_BASE_URL } from "@/services/api";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Image,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   SafeAreaView,
-  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { TextInput, Button } from "react-native-paper";
-import React, { useState } from "react";
-import { MaskedTextInput } from "react-native-mask-text";
-
-import logo from "@/assets/images/fullLogo.png";
-import { useRouter } from "expo-router";
-import { API_BASE_URL } from "@/services/api";
+import { Button, TextInput } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 const Register = () => {
   const [nameSurname, setNameSurname] = useState("");
@@ -32,8 +30,55 @@ const Register = () => {
     router.push("/auth/Login");
   };
 
+  // 📌 Telefon formatlama (Login'dekiyle aynı)
+  const formatPhoneNumber = (text) => {
+    let digits = text.replace(/\D/g, "");
+    if (!digits.startsWith("0")) digits = "0" + digits;
+    digits = digits.slice(0, 11);
+
+    if (digits.length <= 1) return digits;
+    if (digits.length <= 4) return digits[0] + "(" + digits.slice(1);
+    if (digits.length <= 7)
+      return digits[0] + "(" + digits.slice(1, 4) + ") " + digits.slice(4);
+    if (digits.length <= 9)
+      return (
+        digits[0] +
+        "(" +
+        digits.slice(1, 4) +
+        ") " +
+        digits.slice(4, 7) +
+        " " +
+        digits.slice(7)
+      );
+    return (
+      digits[0] +
+      "(" +
+      digits.slice(1, 4) +
+      ") " +
+      digits.slice(4, 7) +
+      " " +
+      digits.slice(7, 9) +
+      " " +
+      digits.slice(9)
+    );
+  };
+
+  const handlePhoneChange = (text) => {
+    let digits = text.replace(/\D/g, "");
+    if (!digits.startsWith("0")) digits = "0" + digits;
+    if (digits.length >= 2 && digits[1] !== "5") {
+      digits = digits[0] + "5" + digits.slice(2);
+    }
+    setPhoneNumber(formatPhoneNumber(digits));
+  };
+
+  // 📌 Email doğrulama
+  const isValidEmail = (mail) => {
+    const pattern = /^(?:[a-zA-Z0-9._%+-]+)@(gmail|hotmail|outlook)\.com$/;
+    return pattern.test(mail);
+  };
+
   const handleRegister = async () => {
-    // Basit validation (backend zaten detaylı kontrol yapacak)
     if (
       !nameSurname ||
       !email ||
@@ -41,30 +86,50 @@ const Register = () => {
       !password ||
       !confirmPassword
     ) {
-      Alert.alert("Hata", "Lütfen tüm alanları doldurun.");
+      Toast.show({
+        type: "error",
+        text1: "Hata",
+        text2: "Lütfen tüm alanları doldurun.",
+      });
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      Toast.show({
+        type: "error",
+        text1: "Geçersiz E-posta",
+        text2: "Lütfen Doğru bir e-posta adresi giriniz",
+      });
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Hata", "Şifreler eşleşmiyor.");
+      Toast.show({
+        type: "error",
+        text1: "Hata",
+        text2: "Şifreler eşleşmiyor.",
+      });
       return;
     }
 
-    // Backend API adresin (kendi adresine göre değiştir)
-
-    // Telefon numarasından parantez ve boşlukları kaldır (backend formatına uygun olsun)
-    const normalizedPhone = phoneNumber.replace(/[()\s-]/g, "");
+    const cleanPhone = phoneNumber.replace(/\D/g, "");
+    if (cleanPhone.length !== 11) {
+      Toast.show({
+        type: "error",
+        text1: "Hata",
+        text2: "Telefon numarası 11 haneli olmalıdır.",
+      });
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE_URL}register/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name_surname: nameSurname,
           email: email,
-          phone_number: normalizedPhone,
+          phone_number: cleanPhone,
           password: password,
           confirm_password: confirmPassword,
         }),
@@ -73,14 +138,21 @@ const Register = () => {
       const json = await response.json();
 
       if (response.ok) {
-        Alert.alert("Başarılı", json.message);
-        router.push("/auth/Login"); // Kayıt sonrası login sayfasına yönlendir
+        Toast.show({ type: "success", text1: "Başarılı", text2: json.message });
+        router.push("/auth/Login");
       } else {
-        // Backend'ten dönen hata mesajı
-        Alert.alert("Hata", json.error || "Kayıt sırasında hata oluştu.");
+        Toast.show({
+          type: "error",
+          text1: "Hata",
+          text2: json.error || "Kayıt sırasında hata oluştu.",
+        });
       }
     } catch (error) {
-      Alert.alert("Hata", "Sunucuya bağlanılamadı.");
+      Toast.show({
+        type: "error",
+        text1: "Hata",
+        text2: "Sunucuya bağlanılamadı.",
+      });
       console.error(error);
     }
   };
@@ -134,29 +206,16 @@ const Register = () => {
             {/* Phone Number */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Telefon Numarası</Text>
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: "grey",
-                  borderRadius: 4,
-                }}
-              >
-                <MaskedTextInput
-                  type="custom"
-                  options={{
-                    mask: "(999) 999 99 99",
-                  }}
-                  keyboardType="numeric"
-                  placeholder="(555) 123 45 67"
-                  style={{
-                    padding: 14,
-                    fontSize: 16,
-                    color: "black",
-                  }}
-                  value={phoneNumber}
-                  onChangeText={setPhoneNumber}
-                />
-              </View>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="0(5xx) xxx xx xx"
+                outlineColor="grey"
+                activeOutlineColor="blue"
+                keyboardType="phone-pad"
+                value={phoneNumber}
+                onChangeText={handlePhoneChange}
+              />
             </View>
 
             {/* Password */}

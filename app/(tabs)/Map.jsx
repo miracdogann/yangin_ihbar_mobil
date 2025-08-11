@@ -132,7 +132,7 @@ const Map = ({
     const fetchStations = async () => {
       try {
         const response = await getStations();
-        setStations(response.data || dummyStations); // API başarısızsa dummy veriler
+        setStations(response.data); // API başarısızsa dummy veriler
         console.log("İstasyonlar:", response.data);
       } catch (err) {
         setError(err);
@@ -292,6 +292,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: "relative",
+    height: "100%",
   },
   webview: {
     flex: 1,

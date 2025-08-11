@@ -1,15 +1,15 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
   Dimensions,
+  Image,
   Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import { Card, IconButton, useTheme } from "react-native-paper";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Card, useTheme } from "react-native-paper";
 
 import logo from "@/assets/images/fullLogo.png";
 
@@ -72,9 +72,7 @@ const Info = () => {
           accessibilityLabel="Uygulama logosu"
         />
 
-        <Text style={[styles.title, { color: theme.colors.primary }]}>
-          Yangını Önle!
-        </Text>
+        <Text style={styles.title}>Yangını Önle!</Text>
 
         <Text style={[styles.subtitle, { color: theme.colors.secondary }]}>
           Küçük önlemlerle büyük felaketleri engelleyebilirsiniz
@@ -130,6 +128,7 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
     width: "100%",
     alignItems: "center",
+    backgroundColor: "#ffffff",
   },
   cardContentContainer: {
     flexDirection: "row",

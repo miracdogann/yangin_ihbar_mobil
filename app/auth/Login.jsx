@@ -1,36 +1,93 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  SafeAreaView,
-  Alert,
-} from "react-native";
-import { TextInput, Button } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import { API_BASE_URL } from "../../services/api";
+// Login.jsx
 import logo from "@/assets/images/fullLogo.png";
 import { useUser } from "@/contexts/userContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Button, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
+import { API_BASE_URL } from "../../services/api";
 
 const Login = () => {
   const [secure, setSecure] = useState(true);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(""); // formatlı
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { refreshUser } = useUser();
-
   const router = useRouter();
 
   const goRegisterPage = () => {
     router.push("/auth/Register");
+  };
+
+  // 📌 Telefon numarasını formatlayan fonksiyon
+  const formatPhoneNumber = (text) => {
+    // Rakam olmayan karakterleri sil
+    let digits = text.replace(/\D/g, "");
+
+    // İlk rakam her zaman 0 olacak
+    if (!digits.startsWith("0")) {
+      digits = "0" + digits;
+    }
+
+    // Sadece 11 hanelik rakama izin ver
+    digits = digits.slice(0, 11);
+
+    // Görsel format: 0(5xx) xxx xx xx
+    if (digits.length <= 1) return digits;
+    if (digits.length <= 4) return digits[0] + "(" + digits.slice(1);
+    if (digits.length <= 7)
+      return digits[0] + "(" + digits.slice(1, 4) + ") " + digits.slice(4);
+    if (digits.length <= 9)
+      return (
+        digits[0] +
+        "(" +
+        digits.slice(1, 4) +
+        ") " +
+        digits.slice(4, 7) +
+        " " +
+        digits.slice(7)
+      );
+    return (
+      digits[0] +
+      "(" +
+      digits.slice(1, 4) +
+      ") " +
+      digits.slice(4, 7) +
+      " " +
+      digits.slice(7, 9) +
+      " " +
+      digits.slice(9)
+    );
+  };
+
+  // 📌 Input değiştiğinde format uygula
+  const handlePhoneChange = (text) => {
+    let digits = text.replace(/\D/g, "");
+
+    // İlk rakam 0 sabit
+    if (!digits.startsWith("0")) {
+      digits = "0" + digits;
+    }
+
+    // 2. rakam sabit 5 olacak
+    if (digits.length >= 2 && digits[1] !== "5") {
+      digits = digits[0] + "5" + digits.slice(2);
+    }
+
+    setPhoneNumber(formatPhoneNumber(digits));
   };
 
   const handleLoginSuccess = async (token) => {
@@ -41,7 +98,24 @@ const Login = () => {
 
   const login = async () => {
     if (!phoneNumber.trim() || !password) {
-      Alert.alert("Hata", "Telefon numarası ve şifre zorunludur.");
+      Toast.show({
+        type: "error",
+        text1: "Telefon numarası ve şifre zorunludur. ",
+        text2: "Telefon numararsı ve şifre giriniz !",
+        position: "top",
+      });
+      return;
+    }
+
+    // 📌 API’ye gönderilecek format (sadece rakamlar)
+    const cleanPhone = phoneNumber.replace(/\D/g, "");
+
+    if (cleanPhone.length !== 11) {
+      Toast.show({
+        type: "error",
+        text1: "Telefon numarası 11 haneli olmalıdır.",
+        text2: "",
+      });
       return;
     }
 
@@ -54,7 +128,7 @@ const Login = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phone_number: phoneNumber.trim(),
+          phone_number: cleanPhone, // 05055555555 formatı
           password: password,
         }),
       });
@@ -62,27 +136,27 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Başarılı login
-        console.log("Giriş başarılı:", data);
         Toast.show({
           type: "success",
           text1: "Giriş Başarılı",
           text2: "Yangın İhbar Sistemine Hoş Geldiniz 👋",
           position: "top",
         });
-        const token = data.token;
-        handleLoginSuccess(token);
+        handleLoginSuccess(data.token);
       } else {
-        // Hata mesajı varsa göster
         Toast.show({
           type: "error",
-          text1: " Başarısız Giriş !",
+          text1: "Başarısız Giriş!",
           text2: data.error,
           position: "top",
         });
       }
     } catch (error) {
-      Alert.alert("Hata", "Sunucuya bağlanırken hata oluştu.");
+      Toast.show({
+        type: "error",
+        text1: "Sunucuya bağlanırken hata oluştu.",
+        text2: "",
+      });
       console.error("Fetch hatası:", error);
     } finally {
       setLoading(false);
@@ -110,12 +184,12 @@ const Login = () => {
               <TextInput
                 mode="outlined"
                 style={styles.textInput}
-                placeholder="(555) 123 45 67"
+                placeholder="0(5xx) xxx xx xx"
                 outlineColor="grey"
                 activeOutlineColor="blue"
                 keyboardType="phone-pad"
                 value={phoneNumber}
-                onChangeText={setPhoneNumber}
+                onChangeText={handlePhoneChange}
               />
             </View>
 
