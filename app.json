@@ -4,7 +4,7 @@
     "slug": "yisis_app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/fullLogo.png",
     "scheme": "yisisapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,11 +13,16 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Konumunuzu uygulama açıkken kullanmamıza izin verin.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Konumunuzu uygulama açıkken ve arka planda kullanmamıza izin verin."
+      },
+      "splash": {
+        "image": "./assets/images/fullLogo.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/fullLogo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -26,14 +31,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logored.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/fullLogo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

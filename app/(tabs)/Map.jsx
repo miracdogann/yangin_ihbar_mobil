@@ -1,4 +1,4 @@
-import { getStations } from "@/services/api";
+import { getFireReportAll, getStations } from "@/services/api";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -29,6 +29,8 @@ const MY_LOCATION_ICON_URL =
 const STATION_ICON_URL =
   "https://raw.githubusercontent.com/miracdogann/sanayi-rehberi-img/refs/heads/main/fire-station.png";
 
+const Fire_URL =
+  "https://raw.githubusercontent.com/miracdogann/sanayi-rehberi-img/refs/heads/main/fireR.gif";
 // Yeniden kullanılabilir RoundButton bileşeni
 const RoundButton = ({
   onPress,
@@ -51,7 +53,7 @@ const RoundButton = ({
 );
 
 // Harita HTML içeriğini oluşturan fonksiyon
-const generateHtml = ({ apiKey, lat, lng, zoom, stations }) => `
+const generateHtml = ({ apiKey, lat, lng, zoom, stations, fireReports }) => `
   <!DOCTYPE html>
   <html>
     <head>
@@ -101,6 +103,7 @@ const generateHtml = ({ apiKey, lat, lng, zoom, stations }) => `
           .setLngLat([${lng}, ${lat}])
           .setPopup(new tt.Popup({ offset: 30 }).setText('Konumum'))
           .addTo(map);
+
         const stations = ${JSON.stringify(stations)};
         stations.forEach(station => {
           const el = document.createElement('img');
@@ -111,6 +114,19 @@ const generateHtml = ({ apiKey, lat, lng, zoom, stations }) => `
             .setPopup(new tt.Popup({ offset: 30 }).setText(station.name))
             .addTo(map);
         });
+
+        // Yangın ihbarlarını marker olarak ekle (stations döngüsünün dışında)
+        const fireReports = ${JSON.stringify(fireReports)};
+        fireReports.forEach(fireReport => {
+          const fire_gif = document.createElement('img');
+          fire_gif.src = '${Fire_URL}';
+          fire_gif.className = 'custom-icon';
+          new tt.Marker({ element: fire_gif })
+            .setLngLat([fireReport.longitude, fireReport.latitude])
+            .setPopup(new tt.Popup({ offset: 30 }).setText(fireReport.description || 'Yangın İhbarı'))
+            .addTo(map);
+        });
+
       </script>
     </body>
   </html>
@@ -123,6 +139,7 @@ const Map = ({
   zoom = DEFAULT_ZOOM,
 }) => {
   const [stations, setStations] = useState([]);
+  const [fireReports, setFireReports] = useState([]);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -133,7 +150,7 @@ const Map = ({
       try {
         const response = await getStations();
         setStations(response.data); // API başarısızsa dummy veriler
-        console.log("İstasyonlar:", response.data);
+        // console.log("İstasyonlar geldi:", response.data);
       } catch (err) {
         setError(err);
         console.error("İstasyon verileri alınamadı:", err);
@@ -144,6 +161,18 @@ const Map = ({
     fetchStations();
   }, []);
 
+  useEffect(() => {
+    const fetchFireReports = async () => {
+      try {
+        const response = await getFireReportAll();
+        setFireReports(response.data);
+        console.log("Yangın ihbarları:", response.data);
+      } catch (err) {
+        console.error("Yangın ihbarları alınamadı:", err);
+      }
+    };
+    fetchFireReports();
+  }, []);
   // Kullanıcı konumunu alma
   useEffect(() => {
     let subscriber;
@@ -240,12 +269,13 @@ const Map = ({
     lng: location.coords.longitude,
     zoom,
     stations,
+    fireReports,
   });
 
   // Buton aksiyonları
   const handleCallPress = () => {
     console.log("Arama butonuna tıklandı");
-    Linking.openURL("tel:+1234567890"); // Gerçek telefon numarası ile değiştirin
+    Linking.openURL("tel:112"); // Gerçek telefon numarası ile değiştirin
   };
 
   const handleAddFirePress = () => {

@@ -1,14 +1,13 @@
+import { API_BASE_URL } from "@/services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
-import { API_BASE_URL } from "../services/api";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null); // kullanıcı bilgileri
   const [loading, setLoading] = useState(true); // veri çekiliyor mu?
-
   const fetchUser = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -16,6 +15,7 @@ export const UserProvider = ({ children }) => {
       if (!token) {
         setUser(null);
         setLoading(false);
+        
         return;
       }
 

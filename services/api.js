@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_BASE_URL ="https://a9b1d67df1b8.ngrok-free.app/api/"
+export const API_BASE_URL ="https://123640c2b4ca.ngrok-free.app/api/"
 
 
 const apiClient = axios.create({
@@ -9,3 +9,14 @@ const apiClient = axios.create({
 });
 
 export const getStations = () => apiClient.get("stations/") 
+export const getFireReportAll =() => apiClient.get("fire-report-all/")
+
+export const getFireReportUser = async (token) => {
+  const res = await apiClient.get("fire-report-user/", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+
+export const getAllReports = () => apiClient.get("fire-report-all/")

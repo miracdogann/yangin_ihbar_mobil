@@ -22,7 +22,6 @@ import Toast from "react-native-toast-message";
 
 const Account = () => {
   const { user, loading } = useUser();
-
   const handleLogout = async () => {
     Toast.show({
       type: "info",
@@ -93,7 +92,7 @@ const Account = () => {
         buttonColor="#002fffff"
         style={styles.button}
         labelStyle={styles.buttonText}
-        onPress={() => console.log("İhbarlarım")}
+        onPress={() => router.navigate("/UserReport/UserReport")}
       >
         İhbarlarım
       </Button>

@@ -1,11 +1,14 @@
 import logo from "@/assets/images/fullLogo.png";
+import Kvkk from "@/components/Kvkk";
 import { API_BASE_URL } from "@/services/api";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
+  Modal,
   Platform,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -20,22 +23,28 @@ const Register = () => {
   const [nameSurname, setNameSurname] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [rawPhoneNumber, setRawPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [securePassword, setSecurePassword] = useState(true);
   const [secureRepeat, setSecureRepeat] = useState(true);
+  const [kvkkAccepted, setKvkkAccepted] = useState(false);
+  const [kvkkModalVisible, setKvkkModalVisible] = useState(false);
+  const [kvkkContent, setKvkkContent] = useState("");
+
+  const phoneInputRef = useRef(null);
   const router = useRouter();
 
   const goLoginPage = () => {
     router.push("/auth/Login");
   };
 
-  // 📌 Telefon formatlama (Login'dekiyle aynı)
-  const formatPhoneNumber = (text) => {
-    let digits = text.replace(/\D/g, "");
+  const formatPhoneNumber = (digits) => {
+    digits = digits.replace(/\D/g, "");
     if (!digits.startsWith("0")) digits = "0" + digits;
+    if (digits.length >= 2 && digits[1] !== "5")
+      digits = digits[0] + "5" + digits.slice(2);
     digits = digits.slice(0, 11);
-
     if (digits.length <= 1) return digits;
     if (digits.length <= 4) return digits[0] + "(" + digits.slice(1);
     if (digits.length <= 7)
@@ -66,13 +75,13 @@ const Register = () => {
   const handlePhoneChange = (text) => {
     let digits = text.replace(/\D/g, "");
     if (!digits.startsWith("0")) digits = "0" + digits;
-    if (digits.length >= 2 && digits[1] !== "5") {
+    if (digits.length >= 2 && digits[1] !== "5")
       digits = digits[0] + "5" + digits.slice(2);
-    }
+    digits = digits.slice(0, 11);
+    setRawPhoneNumber(digits);
     setPhoneNumber(formatPhoneNumber(digits));
   };
 
-  // 📌 Email doğrulama
   const isValidEmail = (mail) => {
     const pattern = /^(?:[a-zA-Z0-9._%+-]+)@(gmail|hotmail|outlook)\.com$/;
     return pattern.test(mail);
@@ -80,11 +89,11 @@ const Register = () => {
 
   const handleRegister = async () => {
     if (
-      !nameSurname ||
-      !email ||
-      !phoneNumber ||
-      !password ||
-      !confirmPassword
+      !nameSurname.trim() ||
+      !email.trim() ||
+      !phoneNumber.trim() ||
+      !password.trim() ||
+      !confirmPassword.trim()
     ) {
       Toast.show({
         type: "error",
@@ -93,16 +102,14 @@ const Register = () => {
       });
       return;
     }
-
     if (!isValidEmail(email)) {
       Toast.show({
         type: "error",
         text1: "Geçersiz E-posta",
-        text2: "Lütfen Doğru bir e-posta adresi giriniz",
+        text2: "Lütfen geçerli bir e-posta girin.",
       });
       return;
     }
-
     if (password !== confirmPassword) {
       Toast.show({
         type: "error",
@@ -111,9 +118,16 @@ const Register = () => {
       });
       return;
     }
-
-    const cleanPhone = phoneNumber.replace(/\D/g, "");
-    if (cleanPhone.length !== 11) {
+    if (!kvkkAccepted) {
+      Toast.show({
+        type: "error",
+        text1: "KVKK Kabulü",
+        text2: "Lütfen KVKK politikasını kabul edin.",
+      });
+      return;
+    }
+    const cleanPhone = rawPhoneNumber;
+    if (!cleanPhone || cleanPhone.length !== 11) {
       Toast.show({
         type: "error",
         text1: "Hata",
@@ -134,9 +148,7 @@ const Register = () => {
           confirm_password: confirmPassword,
         }),
       });
-
       const json = await response.json();
-
       if (response.ok) {
         Toast.show({ type: "success", text1: "Başarılı", text2: json.message });
         router.push("/auth/Login");
@@ -170,10 +182,9 @@ const Register = () => {
         >
           <View style={styles.innerContainer}>
             <Image source={logo} style={styles.logo} />
-
             <Text style={styles.infoText}>Yeni Hesap Oluşturun</Text>
 
-            {/* Full Name */}
+            {/* Ad Soyad */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Ad Soyad</Text>
               <TextInput
@@ -203,10 +214,11 @@ const Register = () => {
               />
             </View>
 
-            {/* Phone Number */}
+            {/* Telefon */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Telefon Numarası</Text>
               <TextInput
+                ref={phoneInputRef}
                 mode="outlined"
                 style={styles.textInput}
                 placeholder="0(5xx) xxx xx xx"
@@ -215,10 +227,12 @@ const Register = () => {
                 keyboardType="phone-pad"
                 value={phoneNumber}
                 onChangeText={handlePhoneChange}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
 
-            {/* Password */}
+            {/* Şifre */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Şifre</Text>
               <TextInput
@@ -239,7 +253,7 @@ const Register = () => {
               />
             </View>
 
-            {/* Password Again */}
+            {/* Şifre Tekrar */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Şifre (Tekrar)</Text>
               <TextInput
@@ -260,7 +274,123 @@ const Register = () => {
               />
             </View>
 
-            {/* Register Button */}
+            {/* KVKK */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 20,
+                width: "80%",
+                padding: 10,
+                borderRadius: 8,
+                backgroundColor: "#f9f9f9",
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.1,
+                shadowRadius: 2,
+                elevation: 2,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setKvkkAccepted(!kvkkAccepted)}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  flex: 1,
+                }}
+                activeOpacity={0.8}
+              >
+                <View
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: 4,
+                    borderWidth: 2,
+                    borderColor: kvkkAccepted ? "#4A90E2" : "#ccc",
+                    backgroundColor: kvkkAccepted ? "#4A90E2" : "#fff",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {kvkkAccepted && (
+                    <Text
+                      style={{
+                        color: "#fff",
+                        fontWeight: "bold",
+                        fontSize: 18,
+                      }}
+                    >
+                      ✓
+                    </Text>
+                  )}
+                </View>
+                <Text
+                  style={{
+                    flexShrink: 1,
+                    marginLeft: 10,
+                    fontSize: 14,
+                    color: "#333",
+                  }}
+                >
+                  KVKK politikasını okudum ve kabul ediyorum.{" "}
+                  <Text
+                    style={{ color: "#4A90E2", fontWeight: "600" }}
+                    onPress={() => setKvkkModalVisible(true)}
+                  >
+                    Aydınlatma Metni
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* KVKK Modal */}
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={kvkkModalVisible}
+              onRequestClose={() => setKvkkModalVisible(false)}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  justifyContent: "center",
+                  padding: 20,
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    borderRadius: 12,
+                    padding: 20,
+                    maxHeight: "80%",
+                  }}
+                >
+                  <ScrollView>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 16,
+                        marginBottom: 10,
+                      }}
+                    >
+                      KVKK Politika Metni
+                    </Text>
+                    <Kvkk />
+                  </ScrollView>
+                  <Pressable
+                    onPress={() => setKvkkModalVisible(false)}
+                    style={{ marginTop: 20, alignSelf: "center" }}
+                  >
+                    <Text style={{ color: "blue", fontWeight: "bold" }}>
+                      Kapat
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+
+            {/* Kayıt Butonu */}
             <Button
               mode="contained"
               buttonColor="blue"
@@ -294,31 +424,12 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     backgroundColor: "white",
   },
-  innerContainer: {
-    alignItems: "center",
-  },
-  logo: {
-    width: "80%",
-    height: 180,
-    resizeMode: "contain",
-    marginBottom: 20,
-  },
-  infoText: {
-    color: "grey",
-    fontSize: 14,
-    marginBottom: 30,
-  },
-  inputGroup: {
-    width: "80%",
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  textInput: {
-    backgroundColor: "white",
-  },
+  innerContainer: { alignItems: "center" },
+  logo: { width: "80%", height: 180, resizeMode: "contain", marginBottom: 20 },
+  infoText: { color: "grey", fontSize: 14, marginBottom: 30 },
+  inputGroup: { width: "80%", marginBottom: 20 },
+  inputLabel: { fontSize: 16, marginBottom: 5 },
+  textInput: { backgroundColor: "white" },
   loginButton: {
     width: "80%",
     height: 50,
@@ -326,18 +437,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     justifyContent: "center",
   },
-  loginButtonText: {
-    color: "white",
-    fontSize: 16,
-  },
-  registerContainer: {
-    flexDirection: "row",
-    marginTop: 30,
-  },
-  bottomInfoText: {
-    color: "grey",
-  },
-  registerText: {
-    color: "blue",
-  },
+  loginButtonText: { color: "white", fontSize: 16 },
+  registerContainer: { flexDirection: "row", marginTop: 30 },
+  bottomInfoText: { color: "grey" },
+  registerText: { color: "blue" },
 });

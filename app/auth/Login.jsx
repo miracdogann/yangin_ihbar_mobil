@@ -1,9 +1,8 @@
-// Login.jsx
 import logo from "@/assets/images/fullLogo.png";
 import { useUser } from "@/contexts/userContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -22,8 +21,10 @@ import { API_BASE_URL } from "../../services/api";
 const Login = () => {
   const [secure, setSecure] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState(""); // formatlı
+  const [rawPhoneNumber, setRawPhoneNumber] = useState(""); // ham rakamlar
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const phoneInputRef = useRef(null);
 
   const { refreshUser } = useUser();
   const router = useRouter();
@@ -33,13 +34,18 @@ const Login = () => {
   };
 
   // 📌 Telefon numarasını formatlayan fonksiyon
-  const formatPhoneNumber = (text) => {
+  const formatPhoneNumber = (digits) => {
     // Rakam olmayan karakterleri sil
-    let digits = text.replace(/\D/g, "");
+    digits = digits.replace(/\D/g, "");
 
     // İlk rakam her zaman 0 olacak
     if (!digits.startsWith("0")) {
       digits = "0" + digits;
+    }
+
+    // İkinci rakam her zaman 5 olacak
+    if (digits.length >= 2 && digits[1] !== "5") {
+      digits = digits[0] + "5" + digits.slice(2);
     }
 
     // Sadece 11 hanelik rakama izin ver
@@ -75,6 +81,7 @@ const Login = () => {
 
   // 📌 Input değiştiğinde format uygula
   const handlePhoneChange = (text) => {
+    // Rakam olmayan karakterleri çıkararak ham veriyi al
     let digits = text.replace(/\D/g, "");
 
     // İlk rakam 0 sabit
@@ -82,11 +89,16 @@ const Login = () => {
       digits = "0" + digits;
     }
 
-    // 2. rakam sabit 5 olacak
+    // İkinci rakam sabit 5 olacak
     if (digits.length >= 2 && digits[1] !== "5") {
       digits = digits[0] + "5" + digits.slice(2);
     }
 
+    // 11 haneli sınırı uygula
+    digits = digits.slice(0, 11);
+
+    // Ham ve formatlanmış veriyi güncelle
+    setRawPhoneNumber(digits);
     setPhoneNumber(formatPhoneNumber(digits));
   };
 
@@ -108,7 +120,7 @@ const Login = () => {
     }
 
     // 📌 API’ye gönderilecek format (sadece rakamlar)
-    const cleanPhone = phoneNumber.replace(/\D/g, "");
+    const cleanPhone = rawPhoneNumber;
 
     if (cleanPhone.length !== 11) {
       Toast.show({
@@ -182,6 +194,7 @@ const Login = () => {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Telefon Numarası</Text>
               <TextInput
+                ref={phoneInputRef}
                 mode="outlined"
                 style={styles.textInput}
                 placeholder="0(5xx) xxx xx xx"
@@ -190,6 +203,8 @@ const Login = () => {
                 keyboardType="phone-pad"
                 value={phoneNumber}
                 onChangeText={handlePhoneChange}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
 

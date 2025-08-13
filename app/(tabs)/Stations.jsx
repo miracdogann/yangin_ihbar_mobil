@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -109,9 +111,28 @@ const Stations = () => {
                     buttonColor="blue"
                     style={styles.button}
                     labelStyle={styles.buttonText}
-                    onPress={() =>
-                      console.log("Arama yapıldı:", station.phone_number)
-                    }
+                    onPress={() => {
+                      if (!station.phone_number) {
+                        Alert.alert(
+                          "Bilgi Eksik",
+                          "Telefon numarası bulunamadı."
+                        );
+                        return;
+                      }
+
+                      // Numara formatlama (boşluk ve tireleri temizle)
+                      let phone = station.phone_number.replace(/[\s-]/g, "");
+
+                      // Eğer numara 0 ile başlıyorsa +90 ekle
+                      if (phone.startsWith("0")) {
+                        phone = "+90" + phone.substring(1);
+                      }
+
+                      const url = `tel:${phone}`;
+                      Linking.openURL(url).catch(() => {
+                        Alert.alert("Hata", "Arama başlatılamadı.");
+                      });
+                    }}
                   >
                     {station.phone_number}
                   </Button>
