@@ -1,9 +1,10 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   Image,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,46 +13,36 @@ import {
 import { Card, useTheme } from "react-native-paper";
 
 import logo from "@/assets/images/fullLogo.png";
+import AboutModal from "../about/About";
+import InfoModal from "../about/Info";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-// Yangın önleme ipuçları verileri
 const FIRE_SAFETY_TIPS = [
   {
     id: 1,
     icon: "fire-extinguisher",
-    text: "Yaz aylarında ormanlık bölgelerde ateş yakmak yangına sebep olabilir. Lütfen pikniklerde ateş yakmamaya dikkat edin.",
+    text: "Yaz aylarında ormanlık bölgelerde ateş yakmayın.",
   },
-  {
-    id: 2,
-    icon: "smoking-off",
-    text: "Atılan sigara izmaritleri, kuru yapraklarla temas ettiğinde büyük yangınlara yol açabilir.",
-  },
+  { id: 2, icon: "smoking-off", text: "Sigara izmaritlerini doğaya atmayın." },
   {
     id: 3,
     icon: "power-plug-off",
-    text: "Ev yangınlarının %25'i elektrik kontağından çıkmaktadır. Uzun süreli kullanmadığınız cihazların fişlerini çekin.",
+    text: "Kullanmadığınız cihazların fişlerini çekin.",
   },
-  {
-    id: 4,
-    icon: "candle",
-    text: "Yanar halde bırakılan mumlar ev yangınlarının önemli sebeplerindendir. Mumları asla gözetimsiz bırakmayın.",
-  },
+  { id: 4, icon: "candle", text: "Mumları gözetimsiz bırakmayın." },
   {
     id: 5,
     icon: "stove",
-    text: "Yemek pişirirken ocak başından ayrılmayın. Yağ yangınlarında asla su kullanmayın, üzerini kapatarak oksijeni kesin.",
+    text: "Ocakta yemek pişirirken başından ayrılmayın.",
   },
-  {
-    id: 6,
-    icon: "alarm-light",
-    text: "Evlerinize duman dedektörü taktırın. Düzenli olarak pil kontrolü yapın ve 10 yılda bir değiştirin.",
-  },
+  { id: 6, icon: "alarm-light", text: "Evlerinize duman dedektörü taktırın." },
 ];
 
 const Info = () => {
   const theme = useTheme();
-  const isIOS = Platform.OS === "ios";
+  const [aboutVisible, setAboutVisible] = useState(false);
+  const [infoVisible, setInfoVisible] = useState(false);
 
   return (
     <View
@@ -63,8 +54,8 @@ const Info = () => {
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
-        bounces={isIOS} // iOS için bounce efekti
-        overScrollMode={isIOS ? "always" : "never"} // Android için overscroll ayarı
+        bounces={Platform.OS === "ios"}
+        overScrollMode={Platform.OS === "ios" ? "always" : "never"}
       >
         <Image
           source={logo}
@@ -73,21 +64,41 @@ const Info = () => {
         />
 
         <Text style={styles.title}>Yangını Önle!</Text>
-
         <Text style={[styles.subtitle, { color: theme.colors.secondary }]}>
           Küçük önlemlerle büyük felaketleri engelleyebilirsiniz
         </Text>
 
+        {/* Hakkımızda ve Info butonları */}
+        <View style={styles.iconRow}>
+          <Pressable
+            style={styles.iconButton}
+            onPress={() => setAboutVisible(true)}
+          >
+            <MaterialCommunityIcons
+              name="account-group"
+              size={28}
+              color="#1976d2"
+            />
+            <Text style={styles.iconText}>Hakkımızda</Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.iconButton}
+            onPress={() => setInfoVisible(true)}
+          >
+            <MaterialCommunityIcons
+              name="information"
+              size={28}
+              color="#1976d2"
+            />
+            <Text style={styles.iconText}>Bilgi</Text>
+          </Pressable>
+        </View>
+
         {FIRE_SAFETY_TIPS.map((tip) => (
           <Card
             key={tip.id}
-            style={[
-              styles.card,
-              {
-                backgroundColor: theme.colors.surface,
-                shadowColor: theme.colors.primary,
-              },
-            ]}
+            style={[styles.card, { backgroundColor: theme.colors.surface }]}
             elevation={3}
           >
             <Card.Content>
@@ -111,6 +122,13 @@ const Info = () => {
           </Card>
         ))}
       </ScrollView>
+
+      {/* Modallar */}
+      <AboutModal
+        visible={aboutVisible}
+        onClose={() => setAboutVisible(false)}
+      />
+      <InfoModal visible={infoVisible} onClose={() => setInfoVisible(false)} />
     </View>
   );
 };
@@ -118,77 +136,44 @@ const Info = () => {
 export default Info;
 
 const styles = StyleSheet.create({
-  formContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
+  formContainer: { flex: 1, alignItems: "center" },
   scrollContainer: {
     flexGrow: 1,
     padding: 16,
     paddingBottom: 32,
     width: "100%",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fff",
   },
   cardContentContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
     padding: 8,
   },
   card: {
     width: screenWidth * 0.92,
     marginVertical: 12,
     borderRadius: 12,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    // Android için shadow
     elevation: 3,
-    // iOS için shadow
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
   },
   logo: {
     marginTop: screenHeight * 0.02,
     width: 180,
     height: 180,
     resizeMode: "contain",
-    opacity: 1,
   },
-  icon: {
-    marginRight: 12,
-    width: 40,
-    height: 40,
-  },
+  icon: { marginRight: 12, width: 40, height: 40 },
   title: {
     fontSize: 28,
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center",
-    fontFamily: Platform.select({
-      ios: "Helvetica Neue",
-      android: "sans-serif-medium",
-    }),
   },
   subtitle: {
     fontSize: 16,
     fontWeight: "400",
     marginBottom: 24,
     textAlign: "center",
-    fontFamily: Platform.select({
-      ios: "Helvetica Neue",
-      android: "sans-serif",
-    }),
   },
   cardContentText: {
     textAlign: "left",
@@ -196,9 +181,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     lineHeight: 22,
-    fontFamily: Platform.select({
-      ios: "Helvetica Neue",
-      android: "sans-serif",
-    }),
   },
+  iconRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 30,
+    marginBottom: 20,
+  },
+  iconButton: { alignItems: "center" },
+  iconText: { marginTop: 4, fontSize: 13, color: "#1976d2" },
 });

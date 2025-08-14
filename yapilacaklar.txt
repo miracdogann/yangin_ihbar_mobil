@@ -1,0 +1,5 @@
+hakkımızda sürdürülebilirik kısımları ekleme 
+
+konum doğrulama kısmı güncellenecek 
+
+adres ekleme kısmı farklı bir adreste eklenbilecek

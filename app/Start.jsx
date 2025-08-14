@@ -1,16 +1,17 @@
+import AutoScrollingLogos from "@/components/AutoScrollingLogos";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
   Dimensions,
-  SafeAreaView,
+  Image,
   Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 
@@ -53,6 +54,7 @@ export default function Start() {
         >
           <Text style={styles.buttonText}>Başla</Text>
         </TouchableOpacity>
+        <AutoScrollingLogos />
 
         {/* Footer */}
         <Text style={styles.footer}>© 2025 Tüm Hakları Saklıdır</Text>
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#0033FF",
     paddingVertical: 14,
     borderRadius: 12,
-    marginBottom: 200,
+    marginBottom: 100,
     shadowColor: "#0033FF",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.4,
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: "absolute",
-    bottom: 20,
+    bottom: 5,
     fontSize: 13,
     color: "#999",
     textAlign: "center",

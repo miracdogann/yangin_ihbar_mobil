@@ -188,6 +188,18 @@ const FireALarm = () => {
         keyboardShouldPersistTaps="handled"
       >
         <Card style={styles.card}>
+          <Button
+            style={{
+              marginBottom: 10,
+              backgroundColor: "#0000ff06",
+              width: "200",
+              alignSelf: "center",
+            }}
+            onPress={() => router.back()}
+            textColor="#0000ff"
+          >
+            Geri Dön
+          </Button>
           <Card.Content>
             {!photo ? (
               <>
@@ -245,9 +257,6 @@ const FireALarm = () => {
               disabled={submitting}
             >
               {submitting ? "Gönderiliyor..." : "Yangın İhbarı Yap"}
-            </Button>
-            <Button onPress={() => router.back()} textColor="#0000ff">
-              Geri Dön
             </Button>
           </Card.Content>
         </Card>
