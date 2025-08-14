@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
+import AddressPickerModal from "@/components/AddressPickerModal";
 
 // Cloudinary ayarları
 const CLOUD_NAME = "ddsoyw2uy";
@@ -33,6 +34,8 @@ const FireALarm = () => {
   const { user, isLoaded } = useUser();
   const cameraRef = useRef(null);
   const router = useRouter();
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // Token alma
   useEffect(() => {
@@ -259,6 +262,15 @@ const FireALarm = () => {
             {error ? <Text style={styles.error}>{error}</Text> : null}
 
             <Button
+              mode="outlined"
+              onPress={() => setIsModalVisible(true)}
+              style={styles.button}
+              disabled={submitting}
+            >
+              Adres Girerek Konum Seç
+            </Button>
+
+            <Button
               icon={submitting ? "progress-clock" : "check"}
               mode="contained"
               onPress={confirmSubmit}
@@ -270,6 +282,15 @@ const FireALarm = () => {
               {submitting ? "Gönderiliyor..." : "Yangın İhbarı Yap"}
             </Button>
           </Card.Content>
+
+          <AddressPickerModal
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          onSelectCoordinates={(lat, lon) => {
+            setLocation({ latitude: lat, longitude: lon });
+            setLocationStatus("Konum doğrulandı ✅");
+          }}
+          />
         </Card>
       </ScrollView>
     </KeyboardAvoidingView>
