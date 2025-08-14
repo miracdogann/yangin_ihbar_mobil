@@ -12,6 +12,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Alert
 } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
@@ -121,6 +122,17 @@ const FireALarm = () => {
       console.error(err);
       return null;
     }
+  };
+
+    const confirmSubmit = () => {
+    Alert.alert(
+      "Yangın İhbarı",
+      "Emin misiniz? Yangın ihbarı gönderilecek.",
+      [
+        { text: "İptal", style: "cancel" },
+        { text: "Evet", onPress: () => handleSubmit() },
+      ]
+    );
   };
 
   const handleSubmit = async () => {
@@ -239,18 +251,17 @@ const FireALarm = () => {
               mode="outlined"
               onPress={getLocation}
               style={styles.button}
-              disabled={submitting}
+              disabled={submitting || locationStatus === "Konum doğrulanıyor..."}
             >
-              Konumu Doğrula
+              {locationStatus || "Konumu Doğrula"}
             </Button>
 
-            <Text style={styles.locationStatus}>{locationStatus}</Text>
             {error ? <Text style={styles.error}>{error}</Text> : null}
 
             <Button
               icon={submitting ? "progress-clock" : "check"}
               mode="contained"
-              onPress={handleSubmit}
+              onPress={confirmSubmit}
               style={styles.submitButton}
               buttonColor="#D32F2F"
               contentStyle={styles.buttonContent}
