@@ -54,13 +54,13 @@ const Fires = () => {
       const response = await getAllReports();
       let fireList = response.data || [];
 
-      // Adresleri profesyonel şekilde al
       const settledFires = await Promise.allSettled(
         fireList.map(async (fire) => {
-          const address = await getAddressFromCoords(
-            fire.latitude,
-            fire.longitude
-          );
+          let address = fire.address; // Öncelikle mevcut address'i al
+          if (!address) {
+            // Eğer adres yoksa TomTom API ile al
+            address = await getAddressFromCoords(fire.latitude, fire.longitude);
+          }
           return { ...fire, address };
         })
       );
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 4,
+    // elevation: 4,
   },
   logo: { width: 200, height: 200, marginBottom: 8 },
   headerTitle: { fontSize: 22, fontWeight: "bold", color: "#1A1A1A" },

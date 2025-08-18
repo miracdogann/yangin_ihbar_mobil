@@ -115,15 +115,17 @@ const generateHtml = ({ apiKey, lat, lng, zoom, stations, fireReports }) => `
             .addTo(map);
         });
 
-        // Yangın ihbarlarını marker olarak ekle (stations döngüsünün dışında)
+        // Yangın ihbarları
         const fireReports = ${JSON.stringify(fireReports)};
         fireReports.forEach(fireReport => {
           const fire_gif = document.createElement('img');
           fire_gif.src = '${Fire_URL}';
           fire_gif.className = 'custom-icon';
+          const popupText = fireReport.address || (fireReport.description || 'Yangın İhbarı');
+
           new tt.Marker({ element: fire_gif })
             .setLngLat([fireReport.longitude, fireReport.latitude])
-            .setPopup(new tt.Popup({ offset: 30 }).setText(fireReport.description || 'Yangın İhbarı'))
+            .setPopup(new tt.Popup({ offset: 30 }).setText(popupText))
             .addTo(map);
         });
 
@@ -165,14 +167,25 @@ const Map = ({
     const fetchFireReports = async () => {
       try {
         const response = await getFireReportAll();
-        setFireReports(response.data);
-        console.log("Yangın ihbarları:", response.data);
+        const reportsWithAddress = await Promise.all(
+          response.data.map(async (report) => {
+            if (report.address) return report;
+            const address = await getAddressFromCoords(
+              report.latitude,
+              report.longitude
+            );
+            return { ...report, address };
+          })
+        );
+        setFireReports(reportsWithAddress);
+        console.log("Yangın ihbarları:", reportsWithAddress);
       } catch (err) {
         console.error("Yangın ihbarları alınamadı:", err);
       }
     };
     fetchFireReports();
   }, []);
+
   // Kullanıcı konumunu alma
   useEffect(() => {
     let subscriber;
@@ -226,6 +239,25 @@ const Map = ({
       }
     };
   }, []);
+  // TomTom API’den adres alma
+  const getAddressFromCoords = async (lat, lon) => {
+    try {
+      const url = `https://api.tomtom.com/search/2/reverseGeocode/${lat},${lon}.json?key=${DEFAULT_API_KEY}&language=tr-TR`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (
+        data.addresses &&
+        data.addresses.length > 0 &&
+        data.addresses[0].address
+      ) {
+        return data.addresses[0].address.freeformAddress;
+      }
+      return "Adres bulunamadı";
+    } catch (err) {
+      console.error("TomTom adres hatası:", err);
+      return "Adres alınamadı";
+    }
+  };
 
   // Yükleme veya konum bekleme durumu
   if (loading || !location) {
@@ -303,6 +335,7 @@ const Map = ({
       />
       <RoundButton
         iconSource={require("@/assets/icons/call.png")}
+        text="Yangın İhbarı Ver!"
         onPress={handleCallPress}
         style={styles.callButton}
         accessibilityLabel="Acil arama yap"
@@ -350,11 +383,15 @@ const styles = StyleSheet.create({
   },
   callButton: {
     bottom: 150,
-    left: 20,
+    left: 2,
+    // right: 20,
+    flexDirection: "row",
+    paddingHorizontal: 10,
+    width: "auto",
   },
   addFireButton: {
     bottom: 150,
-    right: 20,
+    right: 2,
     flexDirection: "row",
     paddingHorizontal: 10,
     width: "auto",

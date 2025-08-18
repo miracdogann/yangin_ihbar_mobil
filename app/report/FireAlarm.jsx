@@ -1,3 +1,4 @@
+import AddressPickerModal from "@/components/AddressPickerModal";
 import { useUser } from "@/contexts/userContext";
 import { API_BASE_URL } from "@/services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -6,17 +7,16 @@ import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   View,
-  Alert
 } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
-import AddressPickerModal from "@/components/AddressPickerModal";
 
 // Cloudinary ayarları
 const CLOUD_NAME = "ddsoyw2uy";
@@ -30,7 +30,7 @@ const FireALarm = () => {
   const [location, setLocation] = useState(null);
   const [locationStatus, setLocationStatus] = useState("Konum alınmadı");
   const [token, setToken] = useState(null);
-
+  const [selectedAddress, setSelectedAddress] = useState("");
   const { user, isLoaded } = useUser();
   const cameraRef = useRef(null);
   const router = useRouter();
@@ -127,15 +127,11 @@ const FireALarm = () => {
     }
   };
 
-    const confirmSubmit = () => {
-    Alert.alert(
-      "Yangın İhbarı",
-      "Emin misiniz? Yangın ihbarı gönderilecek.",
-      [
-        { text: "İptal", style: "cancel" },
-        { text: "Evet", onPress: () => handleSubmit() },
-      ]
-    );
+  const confirmSubmit = () => {
+    Alert.alert("Yangın İhbarı", "Emin misiniz? Yangın ihbarı gönderilecek.", [
+      { text: "İptal", style: "cancel" },
+      { text: "Evet", onPress: () => handleSubmit() },
+    ]);
   };
 
   const handleSubmit = async () => {
@@ -159,24 +155,52 @@ const FireALarm = () => {
     }
 
     try {
+      const payload = {
+        photo_url: uploadedUrl,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      };
+
+      // Eğer kullanıcı adres seçtiyse payload’a adres metnini ekle
+      if (selectedAddress) {
+        payload.address = selectedAddress;
+      }
+
       const response = await fetch(`${API_BASE_URL}fire-report/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          photo_url: uploadedUrl,
-          latitude: location.latitude,
-          longitude: location.longitude,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         Toast.show({ type: "success", text1: "Yangın İhbarı Yapıldı" });
         router.push("/(tabs)/Map");
       } else {
-        Toast.show({ type: "error", text1: "İhbar gönderilemedi" });
+        const errorData = await response.json();
+        let errorMessage = errorData.error || "İhbar gönderilemedi";
+        let errorDetail = errorData.detail || "";
+
+        // Yangın tespit edilmediyse özel bir mesaj göster
+        if (errorMessage === "Yangın tespit edilmedi, ihbar yapılamaz.") {
+          errorDetail =
+            "Lütfen yangın yoğun duman vb  içeren bir fotoğraf yükleyin.";
+        } else if (errorMessage === "Tüm alanlar gerekli") {
+          errorDetail = "Fotoğraf, enlem ve boylam bilgilerini kontrol edin.";
+        } else if (
+          errorMessage === "Authorization header missing or invalid" ||
+          errorMessage === "Invalid token"
+        ) {
+          errorDetail = "Lütfen tekrar giriş yapmayı deneyin.";
+        }
+
+        Toast.show({
+          type: "error",
+          text1: errorMessage,
+          text2: errorDetail,
+        });
       }
     } catch (error) {
       console.error(error);
@@ -254,7 +278,9 @@ const FireALarm = () => {
               mode="outlined"
               onPress={getLocation}
               style={styles.button}
-              disabled={submitting || locationStatus === "Konum doğrulanıyor..."}
+              disabled={
+                submitting || locationStatus === "Konum doğrulanıyor..."
+              }
             >
               {locationStatus || "Konumu Doğrula"}
             </Button>
@@ -270,6 +296,13 @@ const FireALarm = () => {
               Adres Girerek Konum Seç
             </Button>
 
+            <Text>
+              {selectedAddress ? (
+                <Text style={styles.selectedAddress}>
+                  Seçilen Adres: {selectedAddress}
+                </Text>
+              ) : null}
+            </Text>
             <Button
               icon={submitting ? "progress-clock" : "check"}
               mode="contained"
@@ -284,12 +317,13 @@ const FireALarm = () => {
           </Card.Content>
 
           <AddressPickerModal
-          visible={isModalVisible}
-          onClose={() => setIsModalVisible(false)}
-          onSelectCoordinates={(lat, lon) => {
-            setLocation({ latitude: lat, longitude: lon });
-            setLocationStatus("Konum doğrulandı ✅");
-          }}
+            visible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            onSelectCoordinates={(lat, lon, addressText) => {
+              setLocation({ latitude: lat, longitude: lon });
+              setSelectedAddress(addressText); // Seçilen adres metni
+              setLocationStatus("Konum doğrulandı ✅");
+            }}
           />
         </Card>
       </ScrollView>
@@ -339,6 +373,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     color: "#1E88E5",
     fontWeight: "500",
+  },
+  selectedAddress: {
+    fontSize: 16,
+    marginVertical: 8,
+    textAlign: "center",
+    color: "#333",
   },
 });
 

@@ -81,9 +81,14 @@ const UserReports = () => {
 
       const data = await getFireReportUser(token);
 
-      // Adresleri profesyonel şekilde al
+      // Adresleri kontrol et ve gerekirse TomTom API'den al
       const settledReports = await Promise.allSettled(
         data.map(async (report) => {
+          // Eğer address null değilse, doğrudan kullan
+          if (report.address) {
+            return report;
+          }
+          // Address null ise TomTom API'den adres al
           const address = await getAddressFromCoords(
             report.latitude,
             report.longitude
