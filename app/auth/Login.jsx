@@ -13,10 +13,13 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions
 } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import { API_BASE_URL } from "../../services/api";
+
+const { width, height } = Dimensions.get("window");
 
 const Login = () => {
   const [secure, setSecure] = useState(true);
@@ -175,10 +178,12 @@ const Login = () => {
     }
   };
 
+  const logoHeight = width < 500 ? width * 0.7 : width * 0.5;
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.keyboardView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
       >
@@ -187,12 +192,28 @@ const Login = () => {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.innerContainer}>
-            <Image source={logo} style={styles.logo} />
+            {/* Logo */}
+            <Image
+              source={logo}
+              style={[
+                styles.logo,
+                {
+                  height: logoHeight,
+                  width: logoHeight,
+                },
+              ]}
+            />
 
-            <Text style={styles.infoText}>Hemen Giriş Yapın !</Text>
+            {/* Bilgilendirme metni */}
+            <Text style={styles.infoText}>
+              Hemen Giriş Yapın !
+            </Text>
 
+            {/* Telefon Numarası Input */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Telefon Numarası</Text>
+              <Text style={styles.inputLabel}>
+                Telefon Numarası
+              </Text>
               <TextInput
                 ref={phoneInputRef}
                 mode="outlined"
@@ -208,8 +229,11 @@ const Login = () => {
               />
             </View>
 
+            {/* Şifre Input */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Şifre</Text>
+              <Text style={styles.inputLabel}>
+                Şifre
+              </Text>
               <TextInput
                 mode="outlined"
                 style={styles.textInput}
@@ -228,11 +252,17 @@ const Login = () => {
               />
             </View>
 
+            {/* Giriş Butonu */}
             <Button
               mode="contained"
               buttonColor="blue"
               rippleColor="white"
-              style={styles.loginButton}
+              style={[
+                styles.loginButton,
+                {
+                  marginTop: height * 0.02,
+                },
+              ]}
               labelStyle={styles.loginButtonText}
               loading={loading}
               disabled={loading}
@@ -241,10 +271,23 @@ const Login = () => {
               Giriş Yap
             </Button>
 
-            <View style={styles.registerContainer}>
-              <Text style={styles.bottomInfoText}>Hesabın Yok Mu ?</Text>
+            {/* Kayıt Ol Bölümü */}
+            <View
+              style={[
+                styles.registerContainer,
+                {
+                  marginTop: height * 0.03,
+                },
+              ]}
+            >
+              <Text style={styles.bottomInfoText}>
+                Hesabın Yok Mu ?
+              </Text>
               <TouchableOpacity onPress={goRegisterPage}>
-                <Text style={styles.registerText}> Kayıt Ol</Text>
+                <Text style={styles.registerText}>
+                  {" "}
+                  Kayıt Ol
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -254,32 +297,38 @@ const Login = () => {
   );
 };
 
+
 export default Login;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  keyboardView: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    paddingVertical: 40,
+    paddingVertical: height * 0.05,
     backgroundColor: "white",
   },
   innerContainer: {
     alignItems: "center",
   },
   logo: {
-    width: "80%",
-    height: 270,
     resizeMode: "contain",
-    marginBottom: 20,
+    marginBottom: height * 0.03,
   },
   infoText: {
     color: "grey",
     fontSize: 14,
-    marginBottom: 30,
+    marginBottom: height * 0.04,
   },
   inputGroup: {
     width: "80%",
-    marginBottom: 20,
+    marginBottom: height * 0.025,
   },
   inputLabel: {
     fontSize: 16,
@@ -292,7 +341,6 @@ const styles = StyleSheet.create({
     width: "80%",
     height: 50,
     borderRadius: 8,
-    marginTop: 20,
     justifyContent: "center",
   },
   loginButtonText: {
@@ -301,7 +349,6 @@ const styles = StyleSheet.create({
   },
   registerContainer: {
     flexDirection: "row",
-    marginTop: 30,
   },
   bottomInfoText: {
     color: "grey",

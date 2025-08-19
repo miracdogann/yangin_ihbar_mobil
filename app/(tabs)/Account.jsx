@@ -9,6 +9,7 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  Dimensions
 } from "react-native";
 import {
   ActivityIndicator,
@@ -19,6 +20,8 @@ import {
   Text,
 } from "react-native-paper";
 import Toast from "react-native-toast-message";
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const Account = () => {
   const { user, loading } = useUser();
@@ -62,17 +65,29 @@ const Account = () => {
         <Card style={styles.card} mode="elevated">
           <Card.Content style={styles.cardContent}>
             <View style={styles.infoItem}>
-              <Avatar.Icon icon="account" size={28} style={styles.icon} />
+              <Avatar.Icon
+                icon="account"
+                size={Math.min(screenWidth * 0.08, 36)}
+                style={styles.icon}
+              />
               <Text style={styles.infoText}>{user?.name_surname}</Text>
             </View>
             <Divider style={styles.divider} />
             <View style={styles.infoItem}>
-              <Avatar.Icon icon="phone" size={28} style={styles.icon} />
+              <Avatar.Icon
+                icon="phone"
+                size={Math.min(screenWidth * 0.08, 36)}
+                style={styles.icon}
+              />
               <Text style={styles.infoText}>{user?.phone_number}</Text>
             </View>
             <Divider style={styles.divider} />
             <View style={styles.infoItem}>
-              <Avatar.Icon icon="email" size={28} style={styles.icon} />
+              <Avatar.Icon
+                icon="email"
+                size={Math.min(screenWidth * 0.08, 36)}
+                style={styles.icon}
+              />
               <Text style={styles.infoText}>{user?.email}</Text>
             </View>
           </Card.Content>
@@ -80,7 +95,7 @@ const Account = () => {
 
         {/* Profil Avatarı */}
         <Avatar.Image
-          size={70}
+          size={Math.min(screenWidth * 0.18, 70)}
           source={require("@/assets/images/user.png")}
           style={styles.avatar}
         />
@@ -107,8 +122,7 @@ const Account = () => {
         Çıkış Yap
       </Button>
 
-      {/* İleride ek alanlar için boşluk */}
-      <View style={{ height: 40 }} />
+      <View style={{ height: screenHeight * 0.05 }} />
     </ScrollView>
   );
 };
@@ -119,9 +133,11 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     alignItems: "center",
+    justifyContent: "flex-start",
     backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 20,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
     paddingBottom: 30,
+    minHeight: screenHeight,
   },
   loadingContainer: {
     flex: 1,
@@ -130,21 +146,25 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   logo: {
-    width: "60%",
-    height: 200,
-    marginBottom: 20,
+    width: screenWidth * 0.6, 
+    height: screenHeight * 0.25,
+    marginTop: screenHeight * 0.01,
+    marginBottom: screenHeight * 0.03,
+    resizeMode: "contain",
   },
   cardWrapper: {
-    width: "90%",
+    width: "95%",
     alignItems: "center",
     marginBottom: 25,
+    paddingTop: 50,
   },
   card: {
     width: "100%",
     borderRadius: 16,
-    paddingTop: 50,
     backgroundColor: "#fff",
     elevation: 3,
+    paddingTop: 50,
+    paddingBottom: 20,
   },
   cardContent: {
     paddingHorizontal: 20,
@@ -152,7 +172,7 @@ const styles = StyleSheet.create({
   avatar: {
     position: "absolute",
     top: -35,
-    zIndex: 1,
+    zIndex: 2,
     backgroundColor: "white",
   },
   infoItem: {
@@ -166,7 +186,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   infoText: {
-    fontSize: 16,
+    fontSize: Math.min(Math.round(screenWidth * 0.045), 18),
     color: "#333",
     flexShrink: 1,
   },
@@ -176,13 +196,13 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "90%",
-    height: 50,
+    height: Math.min(50, screenHeight * 0.07),
     borderRadius: 12,
     marginTop: 15,
     justifyContent: "center",
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: Math.min(Math.round(screenWidth * 0.045), 18),
     fontWeight: "500",
     color: "white",
   },

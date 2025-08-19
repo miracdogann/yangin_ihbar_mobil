@@ -16,6 +16,7 @@ import { Avatar, Button, Card, Divider } from "react-native-paper";
 import { getStations } from "@/services/api";
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const Stations = () => {
   const [stations, setStations] = useState([]);
@@ -48,7 +49,6 @@ const Stations = () => {
         <Image
           source={require("@/assets/images/fullLogo.png")}
           style={styles.logo}
-          resizeMode="contain"
         />
 
         <View style={styles.cardWrapper}>
@@ -161,10 +161,13 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   logo: {
-    width: screenWidth * 0.4,
-    height: 150,
-    marginTop: 50,
+    width: screenWidth * 0.5,        // ekran genişliğinin %50'si
+    height: screenHeight * 0.2,      // ekran yüksekliğinin %20'si
+    maxHeight: 200,                  // büyük ekranlar için maksimum
+    minHeight: 100,                  // küçük ekranlar için minimum
+    marginTop: screenHeight * 0.05,  // üst boşluk
     alignSelf: "center",
+    resizeMode: "contain",
   },
   cardWrapper: {
     width: screenWidth * 0.9,

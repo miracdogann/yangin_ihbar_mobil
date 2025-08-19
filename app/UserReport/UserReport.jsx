@@ -11,8 +11,11 @@ import {
   StyleSheet,
   Text,
   View,
+  Dimensions
 } from "react-native";
 import { Button } from "react-native-paper";
+
+const { width: screenWidth } = Dimensions.get("window");
 
 const STATUS_COLORS = {
   pending: "#FFA500",
@@ -260,7 +263,8 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 20,
     marginVertical: 8,
-    marginHorizontal: 16,
+    width: screenWidth * 0.9, // ekranın %90’ı
+    alignSelf: "center",       // ortala
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -268,7 +272,13 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   title: { fontWeight: "700", fontSize: 18, marginBottom: 12, color: "#222" },
-  image: { width: "100%", height: 200, borderRadius: 12, marginBottom: 15 },
+  image: {
+    width: "100%",             // kartın tamamını kapla
+    height: (screenWidth * 0.9) * 0.6, // 3:2 oran
+    borderRadius: 12,
+    marginBottom: 15,
+    alignSelf: "center",
+  },
   infoRow: { flexDirection: "row", marginBottom: 6 },
   label: { fontWeight: "600", color: "#555", width: 80 },
   value: { color: "#333", flexShrink: 1 },

@@ -8,9 +8,12 @@ import {
   StyleSheet,
   Text,
   View,
+  Dimensions
 } from "react-native";
 
 const API_KEY = "vxNgHq8W1x8soPbMdhwWqgyDrT6ZVMXf"; // TomTom API key
+
+const screenWidth = Dimensions.get("window").width;
 
 const Fires = () => {
   const [fires, setFires] = useState([]);
@@ -202,8 +205,17 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     // elevation: 4,
   },
-  logo: { width: 200, height: 200, marginBottom: 8 },
-  headerTitle: { fontSize: 22, fontWeight: "bold", color: "#1A1A1A" },
+  logo: {
+    width: screenWidth * 0.4,
+    height: screenWidth * 0.4,
+    marginBottom: 0, // eski 8 yerine 4 yaptık
+  },
+  headerTitle: {
+    fontSize: screenWidth * 0.05,
+    fontWeight: "bold",
+    color: "#1A1A1A",
+    textAlign: "center",
+  },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   loadingText: { marginTop: 12, fontSize: 16, color: "#666" },
   errorContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
@@ -226,7 +238,12 @@ const styles = StyleSheet.create({
     elevation: 4,
     marginBottom: 16,
   },
-  cardImage: { width: "100%", height: 220 },
+  cardImage: {
+    width: screenWidth - 32,          // FlatList paddingını çıkarıyoruz
+    height: ((screenWidth - 32) * 9) / 16, // 16:9 oranında yüksekliği ayarla
+    resizeMode: "contain",            // resmin tamamı gözükür
+    alignSelf: "center",
+  },
   cardContent: { padding: 16 },
   cardTitle: {
     fontSize: 18,
@@ -246,5 +263,6 @@ const styles = StyleSheet.create({
   statusInactive: { color: "#009c05ff" },
   coordinates: { fontSize: 14, color: "#666", marginBottom: 12 },
 });
+
 
 export default Fires;

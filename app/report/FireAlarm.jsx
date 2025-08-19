@@ -14,6 +14,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions
 } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
@@ -21,6 +22,9 @@ import Toast from "react-native-toast-message";
 // Cloudinary ayarları
 const CLOUD_NAME = "ddsoyw2uy";
 const UPLOAD_PRESET = "fire_add";
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const FireALarm = () => {
   const [permission, requestPermission] = useCameraPermissions();
@@ -216,22 +220,37 @@ const FireALarm = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
     >
-      <Image
-        style={styles.logo}
-        source={require("@/assets/images/fullLogo.png")}
-      />
-      <Text style={styles.title}>Yangın İhbarı!</Text>
-
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "flex-start",
+          paddingBottom: 30,
+          minHeight: screenHeight,
+        }}
         keyboardShouldPersistTaps="handled"
       >
+        <Image
+          style={[
+            styles.logo,
+            { width: screenWidth * 0.5, height: screenWidth * 0.5, marginTop: 10 },
+          ]}
+          source={require("@/assets/images/fullLogo.png")}
+        />
+        <Text
+          style={[
+            styles.title,
+            { fontSize: Math.round(screenWidth * 0.09), marginBottom: 8 },
+          ]}
+        >
+          Yangın İhbarı!
+        </Text>
+
         <Card style={styles.card}>
           <Button
             style={{
               marginBottom: 10,
               backgroundColor: "#0000ff06",
-              width: "200",
+              width: screenWidth * 0.5,
               alignSelf: "center",
             }}
             onPress={() => router.back()}
@@ -254,13 +273,16 @@ const FireALarm = () => {
                 </Button>
                 <CameraView
                   ref={cameraRef}
-                  style={styles.camera}
+                  style={[styles.camera, { height: screenWidth * 0.6 }]}
                   facing="back"
                 />
               </>
             ) : (
               <>
-                <Image source={{ uri: photo }} style={styles.previewImage} />
+                <Image
+                  source={{ uri: photo }}
+                  style={[styles.previewImage, { height: screenWidth * 0.6 }]}
+                />
                 <Button
                   icon="camera-retake"
                   mode="contained"
@@ -278,9 +300,7 @@ const FireALarm = () => {
               mode="outlined"
               onPress={getLocation}
               style={styles.button}
-              disabled={
-                submitting || locationStatus === "Konum doğrulanıyor..."
-              }
+              disabled={submitting || locationStatus === "Konum doğrulanıyor..."}
             >
               {locationStatus || "Konumu Doğrula"}
             </Button>
@@ -321,7 +341,7 @@ const FireALarm = () => {
             onClose={() => setIsModalVisible(false)}
             onSelectCoordinates={(lat, lon, addressText) => {
               setLocation({ latitude: lat, longitude: lon });
-              setSelectedAddress(addressText); // Seçilen adres metni
+              setSelectedAddress(addressText);
               setLocationStatus("Konum doğrulandı ✅");
             }}
           />
@@ -334,12 +354,10 @@ const FireALarm = () => {
 const styles = StyleSheet.create({
   mainContainer: { flex: 1, backgroundColor: "#f5f5f5", padding: 10 },
   container: { flex: 1, justifyContent: "center", alignItems: "center" },
-  logo: { alignSelf: "center", marginTop: 15, width: 180, height: 180 },
+  logo: { alignSelf: "center" },
   title: {
     alignSelf: "center",
-    fontSize: 35,
     fontFamily: "Inter",
-    marginBottom: 12,
   },
   card: {
     padding: 12,
@@ -355,14 +373,12 @@ const styles = StyleSheet.create({
   buttonContent: { paddingVertical: 6 },
   camera: {
     width: "100%",
-    height: 300,
     marginBottom: 16,
     borderRadius: 12,
     overflow: "hidden",
   },
   previewImage: {
     width: "100%",
-    height: 240,
     marginBottom: 16,
     borderRadius: 12,
   },

@@ -133,10 +133,12 @@ const Info = () => {
   );
 };
 
+
 export default Info;
 
 const styles = StyleSheet.create({
   formContainer: { flex: 1, alignItems: "center" },
+
   scrollContainer: {
     flexGrow: 1,
     padding: 16,
@@ -145,49 +147,67 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
   },
+
   cardContentContainer: {
     flexDirection: "row",
     alignItems: "center",
     padding: 8,
   },
+
   card: {
-    width: screenWidth * 0.92,
-    marginVertical: 12,
-    borderRadius: 12,
+    width: screenWidth * 0.9, // ekran genişliğinin %90'ı
+    marginVertical: 14,
+    borderRadius: 14,
     elevation: 3,
   },
+
   logo: {
     marginTop: screenHeight * 0.02,
-    width: 180,
-    height: 180,
+    width: Math.min(screenWidth * 0.55, 220), // biraz daha büyük, max 220px
+    height: Math.min(screenWidth * 0.55, 220),
     resizeMode: "contain",
   },
-  icon: { marginRight: 12, width: 40, height: 40 },
+
+  icon: {
+    marginRight: 12,
+    width: Math.min(screenWidth * 0.075, 45), // biraz daha büyük ikonlar
+    height: Math.min(screenWidth * 0.075, 45),
+  },
+
   title: {
-    fontSize: 28,
+    fontSize: Math.min(Math.round(screenWidth * 0.08), 34), // biraz daha büyük
     fontWeight: "600",
-    marginBottom: 8,
+    marginBottom: 10,
     textAlign: "center",
   },
+
   subtitle: {
-    fontSize: 16,
+    fontSize: Math.min(Math.round(screenWidth * 0.05), 20), // biraz daha büyük
     fontWeight: "400",
-    marginBottom: 24,
+    marginBottom: 28,
     textAlign: "center",
   },
+
   cardContentText: {
     textAlign: "left",
     fontWeight: "500",
     flex: 1,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: Math.min(Math.round(screenWidth * 0.048), 17), // hafif büyütüldü
+    lineHeight: 24,
   },
+
   iconRow: {
     flexDirection: "row",
     justifyContent: "center",
     gap: 30,
-    marginBottom: 20,
+    marginBottom: 22,
   },
+
   iconButton: { alignItems: "center" },
-  iconText: { marginTop: 4, fontSize: 13, color: "#1976d2" },
+
+  iconText: {
+    marginTop: 4,
+    fontSize: Math.min(Math.round(screenWidth * 0.04), 15), // hafif büyütüldü
+    color: "#1976d2",
+  },
 });

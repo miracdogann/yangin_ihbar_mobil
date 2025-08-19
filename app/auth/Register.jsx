@@ -15,9 +15,12 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions
 } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
+
+const { width, height } = Dimensions.get("window");
 
 const Register = () => {
   const [nameSurname, setNameSurname] = useState("");
@@ -170,237 +173,65 @@ const Register = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled"
-        >
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}>
+        <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
           <View style={styles.innerContainer}>
             <Image source={logo} style={styles.logo} />
             <Text style={styles.infoText}>Yeni Hesap Oluşturun</Text>
 
-            {/* Ad Soyad */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Ad Soyad</Text>
-              <TextInput
-                mode="outlined"
-                style={styles.textInput}
-                placeholder="Adınızı ve soyadınızı girin"
-                outlineColor="grey"
-                activeOutlineColor="blue"
-                value={nameSurname}
-                onChangeText={setNameSurname}
-              />
+              <TextInput mode="outlined" style={styles.textInput} placeholder="Adınızı ve soyadınızı girin" outlineColor="grey" activeOutlineColor="blue" value={nameSurname} onChangeText={setNameSurname} />
             </View>
 
-            {/* Email */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>E-Posta Adresi</Text>
-              <TextInput
-                mode="outlined"
-                style={styles.textInput}
-                placeholder="ornek@gmail.com"
-                outlineColor="grey"
-                activeOutlineColor="blue"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-              />
+              <TextInput mode="outlined" style={styles.textInput} placeholder="ornek@gmail.com" outlineColor="grey" activeOutlineColor="blue" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
             </View>
 
-            {/* Telefon */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Telefon Numarası</Text>
-              <TextInput
-                ref={phoneInputRef}
-                mode="outlined"
-                style={styles.textInput}
-                placeholder="0(5xx) xxx xx xx"
-                outlineColor="grey"
-                activeOutlineColor="blue"
-                keyboardType="phone-pad"
-                value={phoneNumber}
-                onChangeText={handlePhoneChange}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+              <TextInput ref={phoneInputRef} mode="outlined" style={styles.textInput} placeholder="0(5xx) xxx xx xx" outlineColor="grey" activeOutlineColor="blue" keyboardType="phone-pad" value={phoneNumber} onChangeText={handlePhoneChange} autoCapitalize="none" autoCorrect={false} />
             </View>
 
-            {/* Şifre */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Şifre</Text>
-              <TextInput
-                mode="outlined"
-                style={styles.textInput}
-                placeholder="Şifrenizi girin"
-                outlineColor="grey"
-                activeOutlineColor="blue"
-                secureTextEntry={securePassword}
-                right={
-                  <TextInput.Icon
-                    icon={securePassword ? "eye-off" : "eye"}
-                    onPress={() => setSecurePassword(!securePassword)}
-                  />
-                }
-                value={password}
-                onChangeText={setPassword}
-              />
+              <TextInput mode="outlined" style={styles.textInput} placeholder="Şifrenizi girin" outlineColor="grey" activeOutlineColor="blue" secureTextEntry={securePassword} right={<TextInput.Icon icon={securePassword ? "eye-off" : "eye"} onPress={() => setSecurePassword(!securePassword)} />} value={password} onChangeText={setPassword} />
             </View>
 
-            {/* Şifre Tekrar */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Şifre (Tekrar)</Text>
-              <TextInput
-                mode="outlined"
-                style={styles.textInput}
-                placeholder="Şifrenizi tekrar girin"
-                outlineColor="grey"
-                activeOutlineColor="blue"
-                secureTextEntry={secureRepeat}
-                right={
-                  <TextInput.Icon
-                    icon={secureRepeat ? "eye-off" : "eye"}
-                    onPress={() => setSecureRepeat(!secureRepeat)}
-                  />
-                }
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
+              <TextInput mode="outlined" style={styles.textInput} placeholder="Şifrenizi tekrar girin" outlineColor="grey" activeOutlineColor="blue" secureTextEntry={secureRepeat} right={<TextInput.Icon icon={secureRepeat ? "eye-off" : "eye"} onPress={() => setSecureRepeat(!secureRepeat)} />} value={confirmPassword} onChangeText={setConfirmPassword} />
             </View>
 
-            {/* KVKK */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 20,
-                width: "80%",
-                padding: 10,
-                borderRadius: 8,
-                backgroundColor: "#f9f9f9",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.1,
-                shadowRadius: 2,
-                elevation: 2,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => setKvkkAccepted(!kvkkAccepted)}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  flex: 1,
-                }}
-                activeOpacity={0.8}
-              >
-                <View
-                  style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: 4,
-                    borderWidth: 2,
-                    borderColor: kvkkAccepted ? "#4A90E2" : "#ccc",
-                    backgroundColor: kvkkAccepted ? "#4A90E2" : "#fff",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {kvkkAccepted && (
-                    <Text
-                      style={{
-                        color: "#fff",
-                        fontWeight: "bold",
-                        fontSize: 18,
-                      }}
-                    >
-                      ✓
-                    </Text>
-                  )}
+            <View style={styles.kvkkContainer}>
+              <TouchableOpacity onPress={() => setKvkkAccepted(!kvkkAccepted)} style={styles.kvkkTouchable} activeOpacity={0.8}>
+                <View style={[styles.kvkkCheckbox, kvkkAccepted && styles.kvkkCheckboxActive]}>
+                  {kvkkAccepted && <Text style={styles.kvkkCheckText}>✓</Text>}
                 </View>
-                <Text
-                  style={{
-                    flexShrink: 1,
-                    marginLeft: 10,
-                    fontSize: 14,
-                    color: "#333",
-                  }}
-                >
+                <Text style={styles.kvkkText}>
                   KVKK politikasını okudum ve kabul ediyorum.{" "}
-                  <Text
-                    style={{ color: "#4A90E2", fontWeight: "600" }}
-                    onPress={() => setKvkkModalVisible(true)}
-                  >
-                    Aydınlatma Metni
-                  </Text>
+                  <Text style={styles.kvkkLink} onPress={() => setKvkkModalVisible(true)}>Aydınlatma Metni</Text>
                 </Text>
               </TouchableOpacity>
             </View>
 
-            {/* KVKK Modal */}
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={kvkkModalVisible}
-              onRequestClose={() => setKvkkModalVisible(false)}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                  justifyContent: "center",
-                  padding: 20,
-                }}
-              >
-                <View
-                  style={{
-                    backgroundColor: "white",
-                    borderRadius: 12,
-                    padding: 20,
-                    maxHeight: "80%",
-                  }}
-                >
+            <Modal animationType="slide" transparent={true} visible={kvkkModalVisible} onRequestClose={() => setKvkkModalVisible(false)}>
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
                   <ScrollView>
-                    <Text
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: 16,
-                        marginBottom: 10,
-                      }}
-                    >
-                      KVKK Politika Metni
-                    </Text>
+                    <Text style={styles.modalTitle}>KVKK Politika Metni</Text>
                     <Kvkk />
                   </ScrollView>
-                  <Pressable
-                    onPress={() => setKvkkModalVisible(false)}
-                    style={{ marginTop: 20, alignSelf: "center" }}
-                  >
-                    <Text style={{ color: "blue", fontWeight: "bold" }}>
-                      Kapat
-                    </Text>
+                  <Pressable onPress={() => setKvkkModalVisible(false)} style={styles.modalCloseButton}>
+                    <Text style={styles.modalCloseText}>Kapat</Text>
                   </Pressable>
                 </View>
               </View>
             </Modal>
 
-            {/* Kayıt Butonu */}
-            <Button
-              mode="contained"
-              buttonColor="blue"
-              rippleColor="white"
-              style={styles.loginButton}
-              labelStyle={styles.loginButtonText}
-              onPress={handleRegister}
-            >
-              Kayıt Ol
-            </Button>
+            <Button mode="contained" buttonColor="blue" rippleColor="white" style={styles.loginButton} labelStyle={styles.loginButtonText} onPress={handleRegister}>Kayıt Ol</Button>
 
             <View style={styles.registerContainer}>
               <Text style={styles.bottomInfoText}>Zaten hesabın var mı?</Text>
@@ -418,27 +249,138 @@ const Register = () => {
 export default Register;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  keyboardView: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
     paddingVertical: 40,
     backgroundColor: "white",
   },
-  innerContainer: { alignItems: "center" },
-  logo: { width: "80%", height: 180, resizeMode: "contain", marginBottom: 20 },
-  infoText: { color: "grey", fontSize: 14, marginBottom: 30 },
-  inputGroup: { width: "80%", marginBottom: 20 },
-  inputLabel: { fontSize: 16, marginBottom: 5 },
-  textInput: { backgroundColor: "white" },
+  innerContainer: {
+    marginTop: height * 0.01,
+    alignItems: "center",
+  },
+  logo: {
+    width: "80%",
+    height: height * 0.3,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+  infoText: {
+    color: "grey",
+    fontSize: 14,
+    marginBottom: 30,
+  },
+  inputGroup: {
+    width: "80%",
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  textInput: {
+    backgroundColor: "white",
+  },
   loginButton: {
     width: "80%",
-    height: 50,
+    height: "50",
     borderRadius: 8,
     marginTop: 20,
     justifyContent: "center",
   },
-  loginButtonText: { color: "white", fontSize: 16 },
-  registerContainer: { flexDirection: "row", marginTop: 30 },
-  bottomInfoText: { color: "grey" },
-  registerText: { color: "blue" },
+  loginButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  registerContainer: {
+    flexDirection: "row",
+    marginTop: 30,
+  },
+  bottomInfoText: {
+    color: "grey",
+  },
+  registerText: {
+    color: "blue",
+  },
+  kvkkContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    width: "80%",
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  kvkkTouchable: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  kvkkCheckbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#ccc",
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  kvkkCheckboxActive: {
+    borderColor: "#4A90E2",
+    backgroundColor: "#4A90E2",
+  },
+  kvkkCheckText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  kvkkText: {
+    flexShrink: 1,
+    marginLeft: 10,
+    fontSize: 14,
+    color: "#333",
+  },
+  kvkkLink: {
+    color: "#4A90E2",
+    fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 20,
+    maxHeight: "80%",
+  },
+  modalTitle: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  modalCloseButton: {
+    marginTop: 20,
+    alignSelf: "center",
+  },
+  modalCloseText: {
+    color: "blue",
+    fontWeight: "bold",
+  },
 });
+
