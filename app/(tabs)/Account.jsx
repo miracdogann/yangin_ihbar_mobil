@@ -3,13 +3,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import React from "react";
 import {
+  Dimensions,
   Image,
   Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
   View,
-  Dimensions
 } from "react-native";
 import {
   ActivityIndicator,
@@ -55,7 +55,7 @@ const Account = () => {
 
       {/* Logo */}
       <Image
-        source={require("@/assets/images/fullLogo.png")}
+        source={require("@/assets/logos/FullLogoOrg.png")}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   logo: {
-    width: screenWidth * 0.6, 
+    width: screenWidth * 0.6,
     height: screenHeight * 0.25,
     marginTop: screenHeight * 0.01,
     marginBottom: screenHeight * 0.03,

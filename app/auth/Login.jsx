@@ -1,9 +1,10 @@
-import logo from "@/assets/images/fullLogo.png";
+import logo from "@/assets/logos/FullLogoOrg.png";
 import { useUser } from "@/contexts/userContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
+  Dimensions,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -13,7 +14,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Dimensions
 } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
@@ -205,15 +205,11 @@ const Login = () => {
             />
 
             {/* Bilgilendirme metni */}
-            <Text style={styles.infoText}>
-              Hemen Giriş Yapın !
-            </Text>
+            <Text style={styles.infoText}>Hemen Giriş Yapın !</Text>
 
             {/* Telefon Numarası Input */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>
-                Telefon Numarası
-              </Text>
+              <Text style={styles.inputLabel}>Telefon Numarası</Text>
               <TextInput
                 ref={phoneInputRef}
                 mode="outlined"
@@ -231,9 +227,7 @@ const Login = () => {
 
             {/* Şifre Input */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>
-                Şifre
-              </Text>
+              <Text style={styles.inputLabel}>Şifre</Text>
               <TextInput
                 mode="outlined"
                 style={styles.textInput}
@@ -280,14 +274,9 @@ const Login = () => {
                 },
               ]}
             >
-              <Text style={styles.bottomInfoText}>
-                Hesabın Yok Mu ?
-              </Text>
+              <Text style={styles.bottomInfoText}>Hesabın Yok Mu ?</Text>
               <TouchableOpacity onPress={goRegisterPage}>
-                <Text style={styles.registerText}>
-                  {" "}
-                  Kayıt Ol
-                </Text>
+                <Text style={styles.registerText}> Kayıt Ol</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -296,7 +285,6 @@ const Login = () => {
     </SafeAreaView>
   );
 };
-
 
 export default Login;
 

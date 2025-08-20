@@ -47,7 +47,7 @@ const Stations = () => {
         showsVerticalScrollIndicator={false}
       >
         <Image
-          source={require("@/assets/images/fullLogo.png")}
+          source={require("@/assets/logos/FullLogoOrg.png")}
           style={styles.logo}
         />
 
@@ -161,11 +161,11 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   logo: {
-    width: screenWidth * 0.5,        // ekran genişliğinin %50'si
-    height: screenHeight * 0.2,      // ekran yüksekliğinin %20'si
-    maxHeight: 200,                  // büyük ekranlar için maksimum
-    minHeight: 100,                  // küçük ekranlar için minimum
-    marginTop: screenHeight * 0.05,  // üst boşluk
+    width: screenWidth * 0.5, // ekran genişliğinin %50'si
+    height: screenHeight * 0.2, // ekran yüksekliğinin %20'si
+    maxHeight: 200, // büyük ekranlar için maksimum
+    minHeight: 100, // küçük ekranlar için minimum
+    marginTop: screenHeight * 0.05, // üst boşluk
     alignSelf: "center",
     resizeMode: "contain",
   },

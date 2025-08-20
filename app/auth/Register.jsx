@@ -1,9 +1,10 @@
-import logo from "@/assets/images/fullLogo.png";
+import logo from "@/assets/logos/FullLogoOrg.png";
 import Kvkk from "@/components/Kvkk";
 import { API_BASE_URL } from "@/services/api";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
+  Dimensions,
   Image,
   KeyboardAvoidingView,
   Modal,
@@ -15,7 +16,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Dimensions
 } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
@@ -33,7 +33,6 @@ const Register = () => {
   const [secureRepeat, setSecureRepeat] = useState(true);
   const [kvkkAccepted, setKvkkAccepted] = useState(false);
   const [kvkkModalVisible, setKvkkModalVisible] = useState(false);
-  const [kvkkContent, setKvkkContent] = useState("");
 
   const phoneInputRef = useRef(null);
   const router = useRouter();
@@ -174,64 +173,162 @@ const Register = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}>
-        <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+        >
           <View style={styles.innerContainer}>
             <Image source={logo} style={styles.logo} />
             <Text style={styles.infoText}>Yeni Hesap Oluşturun</Text>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Ad Soyad</Text>
-              <TextInput mode="outlined" style={styles.textInput} placeholder="Adınızı ve soyadınızı girin" outlineColor="grey" activeOutlineColor="blue" value={nameSurname} onChangeText={setNameSurname} />
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Adınızı ve soyadınızı girin"
+                outlineColor="grey"
+                activeOutlineColor="blue"
+                value={nameSurname}
+                onChangeText={setNameSurname}
+              />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>E-Posta Adresi</Text>
-              <TextInput mode="outlined" style={styles.textInput} placeholder="ornek@gmail.com" outlineColor="grey" activeOutlineColor="blue" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="ornek@gmail.com"
+                outlineColor="grey"
+                activeOutlineColor="blue"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Telefon Numarası</Text>
-              <TextInput ref={phoneInputRef} mode="outlined" style={styles.textInput} placeholder="0(5xx) xxx xx xx" outlineColor="grey" activeOutlineColor="blue" keyboardType="phone-pad" value={phoneNumber} onChangeText={handlePhoneChange} autoCapitalize="none" autoCorrect={false} />
+              <TextInput
+                ref={phoneInputRef}
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="0(5xx) xxx xx xx"
+                outlineColor="grey"
+                activeOutlineColor="blue"
+                keyboardType="phone-pad"
+                value={phoneNumber}
+                onChangeText={handlePhoneChange}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Şifre</Text>
-              <TextInput mode="outlined" style={styles.textInput} placeholder="Şifrenizi girin" outlineColor="grey" activeOutlineColor="blue" secureTextEntry={securePassword} right={<TextInput.Icon icon={securePassword ? "eye-off" : "eye"} onPress={() => setSecurePassword(!securePassword)} />} value={password} onChangeText={setPassword} />
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Şifrenizi girin"
+                outlineColor="grey"
+                activeOutlineColor="blue"
+                secureTextEntry={securePassword}
+                right={
+                  <TextInput.Icon
+                    icon={securePassword ? "eye-off" : "eye"}
+                    onPress={() => setSecurePassword(!securePassword)}
+                  />
+                }
+                value={password}
+                onChangeText={setPassword}
+              />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Şifre (Tekrar)</Text>
-              <TextInput mode="outlined" style={styles.textInput} placeholder="Şifrenizi tekrar girin" outlineColor="grey" activeOutlineColor="blue" secureTextEntry={secureRepeat} right={<TextInput.Icon icon={secureRepeat ? "eye-off" : "eye"} onPress={() => setSecureRepeat(!secureRepeat)} />} value={confirmPassword} onChangeText={setConfirmPassword} />
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Şifrenizi tekrar girin"
+                outlineColor="grey"
+                activeOutlineColor="blue"
+                secureTextEntry={secureRepeat}
+                right={
+                  <TextInput.Icon
+                    icon={secureRepeat ? "eye-off" : "eye"}
+                    onPress={() => setSecureRepeat(!secureRepeat)}
+                  />
+                }
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
             </View>
 
             <View style={styles.kvkkContainer}>
-              <TouchableOpacity onPress={() => setKvkkAccepted(!kvkkAccepted)} style={styles.kvkkTouchable} activeOpacity={0.8}>
-                <View style={[styles.kvkkCheckbox, kvkkAccepted && styles.kvkkCheckboxActive]}>
+              <TouchableOpacity
+                onPress={() => setKvkkAccepted(!kvkkAccepted)}
+                style={styles.kvkkTouchable}
+                activeOpacity={0.8}
+              >
+                <View
+                  style={[
+                    styles.kvkkCheckbox,
+                    kvkkAccepted && styles.kvkkCheckboxActive,
+                  ]}
+                >
                   {kvkkAccepted && <Text style={styles.kvkkCheckText}>✓</Text>}
                 </View>
                 <Text style={styles.kvkkText}>
                   KVKK politikasını okudum ve kabul ediyorum.{" "}
-                  <Text style={styles.kvkkLink} onPress={() => setKvkkModalVisible(true)}>Aydınlatma Metni</Text>
+                  <Text
+                    style={styles.kvkkLink}
+                    onPress={() => setKvkkModalVisible(true)}
+                  >
+                    Aydınlatma Metni
+                  </Text>
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <Modal animationType="slide" transparent={true} visible={kvkkModalVisible} onRequestClose={() => setKvkkModalVisible(false)}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={kvkkModalVisible}
+              onRequestClose={() => setKvkkModalVisible(false)}
+            >
               <View style={styles.modalOverlay}>
                 <View style={styles.modalContent}>
                   <ScrollView>
                     <Text style={styles.modalTitle}>KVKK Politika Metni</Text>
                     <Kvkk />
                   </ScrollView>
-                  <Pressable onPress={() => setKvkkModalVisible(false)} style={styles.modalCloseButton}>
+                  <Pressable
+                    onPress={() => setKvkkModalVisible(false)}
+                    style={styles.modalCloseButton}
+                  >
                     <Text style={styles.modalCloseText}>Kapat</Text>
                   </Pressable>
                 </View>
               </View>
             </Modal>
 
-            <Button mode="contained" buttonColor="blue" rippleColor="white" style={styles.loginButton} labelStyle={styles.loginButtonText} onPress={handleRegister}>Kayıt Ol</Button>
+            <Button
+              mode="contained"
+              buttonColor="blue"
+              rippleColor="white"
+              style={styles.loginButton}
+              labelStyle={styles.loginButtonText}
+              onPress={handleRegister}
+            >
+              Kayıt Ol
+            </Button>
 
             <View style={styles.registerContainer}>
               <Text style={styles.bottomInfoText}>Zaten hesabın var mı?</Text>
@@ -383,4 +480,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-

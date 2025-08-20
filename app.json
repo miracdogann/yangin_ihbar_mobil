@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "yisis_app",
+    "name": "Yangın İhbar Sistemi",
     "slug": "yisis_app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/fullLogo.png",
+    "icon": "./assets/logos/FullLogoOrg.png",
     "scheme": "yisisapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,18 +15,20 @@
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Konumunuzu uygulama açıkken ve arka planda kullanmamıza izin verin."
       },
       "splash": {
-        "image": "./assets/images/fullLogo.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#ffffff"
+        "image": "./assets/logos/FullLogoOrg.png",
+        "resizeMode": "contain"
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/fullLogo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/logos/FullLogoOrg.png",
+        "backgroundColor": "#ffffff",
+        "monochromeImage": "./assets/logos/FullLogoOrg.png"
       },
+      "icon": "./assets/logos/FullLogoOrg.png",
       "edgeToEdgeEnabled": true,
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
+      "package": "com.yourcompany.yisisapp"
     },
     "web": {
       "bundler": "metro",

@@ -34,7 +34,7 @@ export default function Start() {
       <View style={styles.container}>
         {/* Logo üstte */}
         <Image
-          source={require("../assets/images/fullLogo.png")}
+          source={require("../assets/logos/FullLogoOrg.png")}
           style={styles.logo}
           resizeMode="contain"
         />

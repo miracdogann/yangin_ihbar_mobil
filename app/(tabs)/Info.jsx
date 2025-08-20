@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Card, useTheme } from "react-native-paper";
 
-import logo from "@/assets/images/fullLogo.png";
+import logo from "@/assets/logos/FullLogoOrg.png";
 import AboutModal from "../about/About";
 import InfoModal from "../about/Info";
 
@@ -132,7 +132,6 @@ const Info = () => {
     </View>
   );
 };
-
 
 export default Info;
 
